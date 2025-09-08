@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Churn Prediction Form</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <header>
+    Customer Churn Prediction
+</header>
+
+
+<div class="page-wrapper">
+  <!-- Left Column: Prediction Form -->
+  <div class="container">
+    <div class="wrapper">
+      <h2>🚀 Enter Your Details and Predict Churn Risk Instantly!</h2>
+
+      <form action="/predict_form" method="post" class="predict-form">
+        <input
+          type="number"
+          step="any"
+          name="CreditScore"
+          placeholder="Credit Score"
+          required
+        />
+        <input
+          type="number"
+          name="Geography"
+          placeholder="Geography (France=0, Germany=1, Spain=2)"
+          required
+        />
+        <input
+          type="number"
+          name="Gender"
+          placeholder="Gender (Female=0, Male=1)"
+          required
+        />
+        <input type="number" step="any" name="Age" placeholder="Age" required />
+        <input type="number" name="Tenure" placeholder="Tenure" required />
+        <input
+          type="number"
+          step="any"
+          name="Balance"
+          placeholder="Balance"
+          required
+        />
+        <input
+          type="number"
+          name="NumOfProducts"
+          placeholder="Number of Products"
+          required
+        />
+        <input
+          type="number"
+          name="HasCrCard"
+          placeholder="Has Credit Card (0/1)"
+          required
+        />
+        <input
+          type="number"
+          name="IsActiveMember"
+          placeholder="Is Active Member (0/1)"
+          required
+        />
+        <input
+          type="number"
+          step="any"
+          name="EstimatedSalary"
+          placeholder="Estimated Salary"
+          required
+        />
+
+        <button type="submit">Predict</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Right Column: Result Box -->
+  <div class="right-column">
+    <div class="result-box {% if result %}visible{% endif %}">
+      {% if result %} {% if result.error %}
+      <p class="error">❌ Error: {{ result.error }}</p>
+      {% else %}
+      <h2>📊 Prediction Result</h2>
+      <p class="{{ 'churn' if result.prediction == 1 else 'no-churn' }}">
+        <strong>Status:</strong>
+        {{ '⚠️ Will Churn' if result.prediction == 1 else '✅ Will Not Churn' }}
+      </p>
+      <p>
+        <strong>🔢 Probability:</strong> {{ (result.churn_probability * 100) | round(2) }}%
+      </p>
+      {% endif %} {% endif %}
+    </div>
+
+
+    {% if message %}
+    <div class="alert">{{ message }}</div>
+    {% endif %}
+
+    <!-- Feedback Form -->
+    <div class="feedback-wrapper">
+      <form action="/feedback" method="post" class="feedback-form">
+        <input
+          type="text"
+          name="feedback"
+          placeholder="Your feedback"
+          required
+          maxlength="200"
+        />
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  </div>
+  <!-- /.right-column -->
+</div>
+<!-- /.page-wrapper -->
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <body>
+    <header>
+        Customer Churn Prediction
+    </header>
+
+            
+        {% if message %}
+        <div class="alert">
+            {{ message }}
+        </div>
+        {% endif %}
+
+    <div class="page-wrapper">
+        
+        <div class="container">
+            <div class="wrapper">
+                <h2>Ready to Discover? 🚀 Enter Your Details and Predict Your Churn Risk Instantly!</h2>
+
+                <form action="/predict_form" method="post" class="predict-form">
+                    <input type="number" step="any" name="CreditScore" placeholder="Credit Score" required>
+                    <input type="number" name="Geography" placeholder="Geography (France=0, Germany=1, Spain=2)" required>
+                    <input type="number" name="Gender" placeholder="Gender (Female=0, Male=1)" required>
+                    <input type="number" step="any" name="Age" placeholder="Age" required>
+                    <input type="number" name="Tenure" placeholder="Tenure" required>
+                    <input type="number" step="any" name="Balance" placeholder="Balance" required>
+                    <input type="number" name="NumOfProducts" placeholder="Number of Products" required>
+                    <input type="number" name="HasCrCard" placeholder="Has Credit Card (0/1)" required>
+                    <input type="number" name="IsActiveMember" placeholder="Is Active Member (0/1)" required>
+                    <input type="number" step="any" name="EstimatedSalary" placeholder="Estimated Salary" required>
+
+                    <button type="submit">Predict</button>
+                </form>
+            </div>
+        </div>
+
+        
+        <div class="result-box">
+            {% if result %}
+                {% if result.error %}
+                    <p class="error">❌ Error: {{ result.error }}</p>
+                {% else %}
+                    <h2>📊 Prediction Result</h2>
+                    <p class="{{ 'churn' if result.prediction == 1 else 'no-churn' }}">
+                        <strong>Status:</strong> {{ '⚠️ Will Churn' if result.prediction == 1 else '✅ Will Not Churn' }}
+                    </p>
+                    <p><strong>🔢 Probability:</strong> {{ (result.churn_probability * 100) | round(2) }}%</p>
+                {% endif %}
+            {% endif %}
+        </div>
+
+
+
+        
+  <div class="feedback-wrapper">
+    <form action="/feedback" method="post" class="feedback-form">
+      <input type="text" name="feedback" placeholder="Your feedback" required maxlength="200" />
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+</body> -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Churn Prediction Form</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <header>
+    Customer Churn Prediction
+</header>
+    <div class="container">
+        <div class="wrapper">
+            <h2>Ready to Discover? 🚀 Enter Your Details and Predict Your Churn Risk Instantly!</h2>
+
+        
+
+            <form action="/predict_form" method="post" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <input type="number" step="any" name="CreditScore" placeholder="Credit Score" required>
+            <input type="number" name="Geography" placeholder="Geography (France=0, Germany=1, Spain=2)" required>
+            <input type="number" name="Gender" placeholder="Gender (Female=0, Male=1)" required>
+            <input type="number" step="any" name="Age" placeholder="Age" required>
+            <input type="number" name="Tenure" placeholder="Tenure" required>
+            <input type="number" step="any" name="Balance" placeholder="Balance" required>
+            <input type="number" name="NumOfProducts" placeholder="Number of Products" required>
+            <input type="number" name="HasCrCard" placeholder="Has Credit Card (0/1)" required>
+            <input type="number" name="IsActiveMember" placeholder="Is Active Member (0/1)" required>
+            <input type="number" step="any" name="EstimatedSalary" placeholder="Estimated Salary" required>
+
+            
+            <button type="submit" style="grid-column: 1 / -1;">Predict</button>
+        </form>
+
+        </div>
+    </div>
+    
+        {% if result %}
+        <div class="result-box">
+            {% if result.error %}
+                <p class="error">❌ Error: {{ result.error }}</p>
+            {% else %}
+                <h3>📊 Prediction Result</h3>
+                <p class="{{ 'churn' if result.prediction == 1 else 'no-churn' }}">
+                    <strong>Status:</strong> {{ '⚠️ Will Churn' if result.prediction == 1 else '✅ Will Not Churn' }}
+                </p>
+                <p><strong>🔢 Probability:</strong> {{ result.churn_probability }}</p>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html> -->
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Churn Prediction Form</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <header>
+        Customer Churn Prediction
+    </header>
+
+    {% if message %}
+    <div class="alert">
+        {{ message }}
+    </div>
+    {% endif %}
+
+    <div class="page-wrapper">
+        
+        <div class="container">
+            <div class="wrapper">
+                <h2>Ready to Discover? 🚀 Enter Your Details and Predict Your Churn Risk Instantly!</h2>
+
+                <form action="/predict_form" method="post">
+                    <input type="number" step="any" name="CreditScore" placeholder="Credit Score" required>
+                    <input type="number" name="Geography" placeholder="Geography (France=0, Germany=1, Spain=2)" required>
+                    <input type="number" name="Gender" placeholder="Gender (Female=0, Male=1)" required>
+                    <input type="number" step="any" name="Age" placeholder="Age" required>
+                    <input type="number" name="Tenure" placeholder="Tenure" required>
+                    <input type="number" step="any" name="Balance" placeholder="Balance" required>
+                    <input type="number" name="NumOfProducts" placeholder="Number of Products" required>
+                    <input type="number" name="HasCrCard" placeholder="Has Credit Card (0/1)" required>
+                    <input type="number" name="IsActiveMember" placeholder="Is Active Member (0/1)" required>
+                    <input type="number" step="any" name="EstimatedSalary" placeholder="Estimated Salary" required>
+
+                    <button type="submit">Predict</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="result-box">
+    {% if result %}
+        {% if result.error %}
+            <p class="error">❌ Error: {{ result.error }}</p>
+        {% else %}
+            <h2>📊 Prediction Result</h2>
+            <p class="{{ 'churn' if result.prediction == 1 else 'no-churn' }}">
+                <strong>Status:</strong> {{ '⚠️ Will Churn' if result.prediction == 1 else '✅ Will Not Churn' }}
+            </p>
+            <p><strong>🔢 Probability:</strong> {{ (result.churn_probability * 100) | round(2) }}%</p>
+        {% endif %}
+    {% endif %}
+</div>
+
+            {% if message %}
+                <div class="alert">
+                    {{ message }}
+                </div>
+            {% endif %}
+
+            <div class="feedback-wrapper">
+                <form action="/feedback" method="post" class="feedback-form">
+                    <input type="text" name="feedback" placeholder="Your feedback" required maxlength="200" />
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+
+    </div>
+</body> -->

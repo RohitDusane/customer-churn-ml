@@ -1,0 +1,106 @@
+dataset_name: bank_churn
+description: Schema for Bank Customer Churn dataset
+version: 1.0
+
+columns:
+  - name: creditscore
+    dtype: int
+    nullable: false
+    description: Credit score of the customer
+
+  - name: geography
+    dtype: category
+    nullable: false
+    allowed_values:
+      - france
+      - spain
+      - germany
+    description: Customer's geography (country)
+
+  - name: gender
+    dtype: category
+    nullable: false
+    allowed_values:
+      - male
+      - female
+    description: Customer's gender
+
+  - name: age
+    dtype: int
+    nullable: false
+    description: Age of the customer in years
+
+  - name: tenure
+    dtype: int
+    nullable: false
+    description: Number of years the customer has been with the bank
+
+  - name: balance
+    dtype: float
+    nullable: false
+    description: Account balance
+
+  - name: numofproducts
+    dtype: int
+    nullable: false
+    description: Number of bank products the customer uses
+
+  - name: hascrcard
+    dtype: int
+    nullable: false
+    allowed_values:
+      - 0
+      - 1
+    description: Whether the customer has a credit card (1 = yes, 0 = no)
+
+  - name: isactivemember
+    dtype: int
+    nullable: false
+    allowed_values:
+      - 0
+      - 1
+    description: Whether the customer is an active member (1 = yes, 0 = no)
+
+  - name: estimatedsalary
+    dtype: float
+    nullable: false
+    description: Estimated annual salary of the customer
+
+  - name: exited
+    dtype: int
+    nullable: false
+    allowed_values:
+      - 0
+      - 1
+    description: Whether the customer exited (churned) or not (1 = exited)
+
+numeric_columns:
+  - creditscore
+  - age
+  - tenure
+  - balance
+  - numofproducts
+  - estimatedsalary
+  - hascrcard
+  - isactivemember
+  - exited
+
+categorical_columns:
+  - geography
+  - gender
+
+
+general_rules:
+  max_missing_ratio_per_column: 0.0
+  required_columns:
+    - creditscore
+    - geography
+    - gender
+    - age
+    - tenure
+    - balance
+    - numofproducts
+    - hascrcard
+    - isactivemember
+    - estimatedsalary
+    - exited
