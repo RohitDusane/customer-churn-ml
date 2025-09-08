@@ -11,3 +11,13 @@ myenv_environment.yml
 prj_str.py
 setup.py
 screenshot/*
+
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite
+.env
+.vscode/
+.idea/
