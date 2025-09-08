@@ -1,0 +1,13 @@
+Churn/*
+Churn.egg-info/*
+artifacts/*
+__pycache__*
+constants/*
+data/*
+notebooks
+logs/*
+prediction_app_logs/*
+myenv_environment.yml
+prj_str.py
+setup.py
+screenshot/*
