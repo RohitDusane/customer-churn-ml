@@ -63,7 +63,7 @@ Churn_Pred/
 - Trains baseline models (RandomForest, XGBoost, LogisticRegression, etc.)
 - Evaluates using:
   - **F1 Score**
-  - **ROC AUC**![ROC]([Churn_Pred\screenshot\XGBoost_roc_curve.png)](https://github.com/RohitDusane/customer-churn-ml/blob/main/Churn_Pred/screenshot/XGBoost_roc_curve.png)
+  - **ROC AUC**![ROC](Churn_Pred\screenshot\XGBoost_roc_curve.png)
   - **Top-Decile Lift**
   - **Feature Importance** ![Feature Importance](Churn_Pred\screenshot\XGBoost_feature_importance.png)
 - Tracks all experiments via **MLflow**
