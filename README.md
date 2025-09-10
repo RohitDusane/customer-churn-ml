@@ -159,17 +159,18 @@ SMOTETomek is a powerful tool to address class imbalance by both increasing the 
 
 ## 🧠 Best Model
 
-By default, the best model is selected based on **F1 Score** and saved for deployment.
-
+The best model after hypertuning was **XgBoost** is selected based on **F1 Score = 0.621**, **Test Accuracy: 0.85**, **Train Accuracy: 0.857**, **ROC AUC: 0.859** , **Training time ~40 sec** and saved for deployment.
 
 ---
 
 
 ## 📍 Future Improvements
 
-* Model versioning via DVC
-* CI/CD for automated testing and deployment
-* Advanced hyperparameter tuning with Optuna
+* **Tuning Hyperparameters**:More tuning parameter on XgBoost Model
+* **Ensemble Models**: Combining the predictions of both models could help balance out the high precision and could improve your overall performance metrics.
+* **Feature Engineering**: Look into feature selection or engineering, as improving features might help improve model performance across all metrics.
+* **Model versioning** via DVC
+* **CI/CD** for automated testing and deployment
 
 
 ---
