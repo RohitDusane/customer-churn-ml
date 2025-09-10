@@ -31,10 +31,22 @@ from Churn_Pred.utils import get_lift_status, get_overfit_warning
 import mlflow
 import mlflow.sklearn
 from mlflow.models.signature import infer_signature
+import dagshub  # tracking os million oof experiment virtually via onnecting the github repository
+
+dagshub.init(repo_owner='stat.data247', repo_name='customer-churn-ml', mlflow=True)
+
 from imblearn.pipeline import Pipeline as ImbPipeline
 from imblearn.combine import SMOTETomek
 from collections import Counter
 
+import mlflow
+
+experiment_name = "ChurnPredictionModels"
+# Check if the experiment exists, if not, create it
+experiment = mlflow.get_experiment_by_name(experiment_name)
+if experiment is None:
+    mlflow.create_experiment(experiment_name)
+mlflow.set_experiment(experiment_name)
 
 
 # ====== CONFIG CLASS ======
@@ -792,7 +804,7 @@ if __name__ == "__main__":
     logging.info(f"Data Transformation Artifact: {transformation_artifact}\n")
 
     # Step 4: Training model data using the artifact from Data TRANSFORMATION
-    mlflow.set_tracking_uri("file:./mlruns")  # or use remote server
+    mlflow.set_tracking_uri("https://dagshub.com/stat.data247/customer-churn-ml.git")
     mlflow.set_experiment("ChurnPredictionModels")
     # model_trainer_config = ModelTrainerConfig()
     # model_trainer = ModelTrainer(config=model_trainer_config, data_transformation_artifact=transformation_artifact)

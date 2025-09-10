@@ -18,4 +18,5 @@ mlflow
 xlsxwriter
 python-dotenv
 imblearn
+dagshub
 #-e .
