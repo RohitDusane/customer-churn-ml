@@ -133,7 +133,7 @@ Access App at: `http://localhost:8000`
 
 ### 2. Access the Dashboard:
 
-- Open a browser and go to http://localhost:5000 ![MLflow Dashboard](https://github.com/RohitDusane/customer-churn-ml/blob/main/Churn_Pred/screenshot/mlflow dashbaord.png)
+- Open a browser and go to http://localhost:5000 ![MLflow Dashboard](https://github.com/RohitDusane/customer-churn-ml/blob/main/Churn_Pred/screenshot/mlflow%20dashbaord.png)
 - This will open the MLflow UI where you can see all of your logged experiments, parameters, metrics, and models.
 
 ---
