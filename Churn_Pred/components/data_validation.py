@@ -121,6 +121,7 @@ class DataValidation:
             raise CustomException(e, sys)
         
     def initiate_data_validation(self)->DataValidationArtifact:
+        logging.info('🚀 Starting Data Validation step...\n')
         try:
             # Read Data from INGESTION ARTIFACT
             train_file_path = self.data_ingestion_artifact.train_data_path
@@ -172,11 +173,13 @@ class DataValidation:
                 self.config.valid_train_file_path.parent.mkdir(parents=True, exist_ok=True)
                 train_df.to_csv(self.config.valid_train_file_path, index=False, header=True)
                 test_df.to_csv(self.config.valid_test_file_path, index=False, header=True)
+                logging.info('Data Validation Passed')
             else:
                 # SAVE to INVALID 
                 self.config.invalid_train_file_path.parent.mkdir(parents=True, exist_ok=True)
                 train_df.to_csv(self.config.invalid_train_file_path, index=False, header=True)
                 test_df.to_csv(self.config.invalid_test_file_path, index=False, header=True)
+                logging.info('Data Validation Failed')
 
             logging.info('Data Validation Completed')
 

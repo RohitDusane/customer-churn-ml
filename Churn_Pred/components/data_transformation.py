@@ -91,10 +91,10 @@ class DataTransformation:
                 ('num', num_pipeline, numeric_cols)
             ], remainder='drop', verbose=True)
 
-            logging.info(f'Preprocessor created with numeric columns: {numeric_cols}')
-            logging.info(f'Preprocessor created with categorical columns: {categorical_cols}')
+            # logging.info(f'Preprocessor created with numeric columns: {numeric_cols}')
+            # logging.info(f'Preprocessor created with categorical columns: {categorical_cols}')
 
-            logging.info('Preprocessor (ColumnTransformer) constructed.')
+            # logging.info('Preprocessor (ColumnTransformer) constructed.')
 
             # save_path = self.config.transformed_preprocessor_obj_filepath
             # dir_path = os.path.dirname(save_path)
@@ -191,10 +191,10 @@ class DataTransformation:
 
 
     def initiate_data_transformation(self):
-        logging.info('Initiating Data Transformation...')
+        logging.info('🚀 Initiating Data Transformation Step...\n')
         try:
             # Load validated train and test data
-            logging.info("Loading ingested datasets...")
+            logging.info("Loading Validated datasets...")
             train_data = self.data_valid_artifact.valid_train_file_path
             test_data = self.data_valid_artifact.valid_test_file_path
 
@@ -244,8 +244,10 @@ class DataTransformation:
             # Save transformed DataFrames as CSVs
             train_df_final.to_csv(self.config.transformed_train_df_filepath, index=False)
             test_df_final.to_csv(self.config.transformed_test_df_filepath, index=False)
-            logging.info(f"Train DataFrame saved at: {self.config.transformed_train_df_filepath}")
-            logging.info(f"Test DataFrame saved at: {self.config.transformed_test_df_filepath}")
+            # logging.info(f"Train DataFrame saved at: {self.config.transformed_train_df_filepath}")
+            # logging.info(f"Test DataFrame saved at: {self.config.transformed_test_df_filepath}")
+            logging.info(f"Train DataFrame saved completed")
+            logging.info(f"Test DataFrame saved completed")
 
 
             # Also save numpy arrays for modeling
@@ -269,12 +271,12 @@ class DataTransformation:
                 transformed_test_df_filepath=self.config.transformed_test_df_filepath
             )
 
-            logging.info(f"Train array saved at: {self.config.transformed_train_arr_filepath}")
+            logging.info(f"Train array saved completed")
             logging.info(f"Test array saved completed")
-            logging.info(f"Preprocessor object completed")
+            logging.info(f"Preprocessor object saved completed")
 
 
-            logging.info("Data transformation completed successfully.")
+            logging.info("Data Transformation Completed Successfully.")
             return artifact
 
         except Exception as e:

@@ -1,0 +1,6 @@
+creditscore,geography,gender,age,tenure,balance,numofproducts,hascrcard,isactivemember,estimatedsalary,churn_probability,prediction
+650,0,1,45,3,100000.0,2,1,1,50000.0,0.0694,0
+720,1,0,35,7,80000.0,1,1,0,60000.0,0.1087,0
+590,2,1,50,5,90000.0,2,1,1,75000.0,0.1194,0
+610,0,0,40,10,120000.0,2,0,0,58000.0,0.0384,0
+680,1,0,29,2,60000.0,1,0,1,45000.0,0.0713,0

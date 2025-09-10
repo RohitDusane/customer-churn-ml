@@ -14,5 +14,8 @@ jinja2
 python-multipart
 uvicorn
 xgboost
-
+mlflow
+xlsxwriter
+python-dotenv
+imblearn
 #-e .

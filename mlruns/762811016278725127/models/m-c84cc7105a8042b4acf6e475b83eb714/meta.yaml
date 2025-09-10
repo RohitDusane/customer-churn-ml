@@ -1,0 +1,10 @@
+artifact_location: file:///E:/_DataScienc_KNaik/NEW_GIT_PROJECT_DS/Churn_Prediction/mlruns/762811016278725127/models/m-c84cc7105a8042b4acf6e475b83eb714/artifacts
+creation_timestamp: 1757415183041
+experiment_id: '762811016278725127'
+last_updated_timestamp: 1757415191454
+model_id: m-c84cc7105a8042b4acf6e475b83eb714
+model_type: null
+name: model
+source_run_id: f038cd452cad47bcb24eba66df1f758a
+status: 2
+status_message: null

@@ -1,0 +1,14 @@
+artifact_uri: file:///E:/_DataScienc_KNaik/NEW_GIT_PROJECT_DS/Churn_Prediction/mlruns/762811016278725127/6c718ed4e9354ded89a614f3ccfaba32/artifacts
+end_time: 1757503957191
+entry_point_name: ''
+experiment_id: '762811016278725127'
+lifecycle_stage: active
+run_id: 6c718ed4e9354ded89a614f3ccfaba32
+run_name: Baseline-LogisticRegression
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1757503938380
+status: 3
+tags: []
+user_id: ADMIN

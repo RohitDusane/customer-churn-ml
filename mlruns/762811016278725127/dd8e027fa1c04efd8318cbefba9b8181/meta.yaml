@@ -1,0 +1,14 @@
+artifact_uri: file:///E:/_DataScienc_KNaik/NEW_GIT_PROJECT_DS/Churn_Prediction/mlruns/762811016278725127/dd8e027fa1c04efd8318cbefba9b8181/artifacts
+end_time: 1757502084225
+entry_point_name: ''
+experiment_id: '762811016278725127'
+lifecycle_stage: active
+run_id: dd8e027fa1c04efd8318cbefba9b8181
+run_name: Tuned-LogisticRegression
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1757502054764
+status: 3
+tags: []
+user_id: ADMIN

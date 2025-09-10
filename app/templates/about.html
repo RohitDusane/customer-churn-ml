@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}About - Churn App{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h2>🔍 About This App</h2>
+  <p>
+    This Churn Prediction App is an end-to-end machine learning application built using <strong>FastAPI</strong>.
+    It enables businesses to predict whether a customer is likely to churn based on key features.
+  </p>
+
+  <h3>📊 Machine Learning Pipeline</h3>
+  <ul style="text-align: left; line-height: 1.8; font-size: 18px;">
+    <li>📥 <strong>Data Ingestion:</strong> Load raw CSV data and split into train-test sets.</li>
+    <li>🧪 <strong>Data Validation:</strong> Check for missing values and required schema.</li>
+    <li>🔄 <strong>Data Transformation:</strong> Apply encoding, scaling, and feature engineering.</li>
+    <li>🤖 <strong>Model Training:</strong> Use models like XGBoost, Random Forest, and Logistic Regression.</li>
+    <li>⚙️ <strong>Threshold Tuning:</strong> Optimize the decision threshold for better recall.</li>
+    <li>📈 <strong>Evaluation:</strong> Use precision-recall tradeoff and F1-score for robust evaluation.</li>
+  </ul>
+
+  <h3>🧪 How to Use</h3>
+  <ul style="text-align: left; line-height: 1.8; font-size: 18px;">
+    <li>🔹 <strong>Single Prediction:</strong> Enter customer details in the form and view real-time prediction and probability.</li>
+    <li>🔹 <strong>Batch Prediction:</strong> Upload a CSV file of multiple customers and download the prediction results in a CSV file.</li>
+  </ul>
+
+  <p>
+    ✅ Whether you're evaluating individual customers or analyzing bulk data, this app offers speed, transparency, and accuracy.
+  </p>
+</div>
+{% endblock %}

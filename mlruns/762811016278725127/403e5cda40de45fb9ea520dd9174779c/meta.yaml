@@ -1,0 +1,14 @@
+artifact_uri: file:///E:/_DataScienc_KNaik/NEW_GIT_PROJECT_DS/Churn_Prediction/mlruns/762811016278725127/403e5cda40de45fb9ea520dd9174779c/artifacts
+end_time: 1757415217257
+entry_point_name: ''
+experiment_id: '762811016278725127'
+lifecycle_stage: active
+run_id: 403e5cda40de45fb9ea520dd9174779c
+run_name: Baseline-XGBoost
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1757415203979
+status: 3
+tags: []
+user_id: ADMIN

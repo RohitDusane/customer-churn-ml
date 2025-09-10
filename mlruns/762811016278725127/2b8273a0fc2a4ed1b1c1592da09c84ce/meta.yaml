@@ -1,0 +1,14 @@
+artifact_uri: file:///E:/_DataScienc_KNaik/NEW_GIT_PROJECT_DS/Churn_Prediction/mlruns/762811016278725127/2b8273a0fc2a4ed1b1c1592da09c84ce/artifacts
+end_time: 1757501921723
+entry_point_name: ''
+experiment_id: '762811016278725127'
+lifecycle_stage: active
+run_id: 2b8273a0fc2a4ed1b1c1592da09c84ce
+run_name: Baseline-RandomForest
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1757501892162
+status: 3
+tags: []
+user_id: ADMIN

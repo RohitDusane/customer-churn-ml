@@ -1,0 +1,43 @@
+artifact_path: file:///E:/_DataScienc_KNaik/NEW_GIT_PROJECT_DS/Churn_Prediction/mlruns/762811016278725127/models/m-c84cc7105a8042b4acf6e475b83eb714/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.12.0
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.7.1
+is_signature_from_type_hint: false
+mlflow_version: 3.3.2
+model_id: m-c84cc7105a8042b4acf6e475b83eb714
+model_size_bytes: 184120
+model_uuid: m-c84cc7105a8042b4acf6e475b83eb714
+prompts: null
+run_id: f038cd452cad47bcb24eba66df1f758a
+saved_input_example_info:
+  artifact_path: input_example.json
+  pandas_orient: split
+  serving_input_path: serving_input_example.json
+  type: dataframe
+signature:
+  inputs: '[{"type": "double", "name": "cat__geography_France", "required": true},
+    {"type": "double", "name": "cat__geography_Germany", "required": true}, {"type":
+    "double", "name": "cat__geography_Spain", "required": true}, {"type": "double",
+    "name": "cat__gender_Female", "required": true}, {"type": "double", "name": "cat__gender_Male",
+    "required": true}, {"type": "double", "name": "num__creditscore", "required":
+    true}, {"type": "double", "name": "num__age", "required": true}, {"type": "double",
+    "name": "num__tenure", "required": true}, {"type": "double", "name": "num__balance",
+    "required": true}, {"type": "double", "name": "num__numofproducts", "required":
+    true}, {"type": "double", "name": "num__hascrcard", "required": true}, {"type":
+    "double", "name": "num__isactivemember", "required": true}, {"type": "double",
+    "name": "num__estimatedsalary", "required": true}]'
+  outputs: '[{"type": "tensor", "tensor-spec": {"dtype": "int64", "shape": [-1]}}]'
+  params: null
+type_hint_from_example: false
+utc_time_created: '2025-09-09 10:53:03.195122'

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>{% block title %}Churn App{% endblock %}</title>
+  <link rel="stylesheet" href="/static/style.css" />
+
+
+</head>
+<body>
+  <header>
+    Customer Churn Prediction
+    <nav style="margin-top:10px;">
+      <a href="/" style="margin: 0 10px;">🏠 Home</a>
+      <a href="/about" style="margin: 0 10px;">📚 About</a>
+      <a href="/predict" style="margin: 0 10px;">🔍 Predict</a>
+    </nav>
+  </header>
+
+  {% block content %}{% endblock %}
+</body>
+</html>

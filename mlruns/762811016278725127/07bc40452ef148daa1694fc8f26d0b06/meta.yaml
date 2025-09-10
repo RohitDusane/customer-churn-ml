@@ -1,0 +1,14 @@
+artifact_uri: file:///E:/_DataScienc_KNaik/NEW_GIT_PROJECT_DS/Churn_Prediction/mlruns/762811016278725127/07bc40452ef148daa1694fc8f26d0b06/artifacts
+end_time: 1757502115280
+entry_point_name: ''
+experiment_id: '762811016278725127'
+lifecycle_stage: active
+run_id: 07bc40452ef148daa1694fc8f26d0b06
+run_name: Tuned-XGBoost
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1757502084240
+status: 3
+tags: []
+user_id: ADMIN

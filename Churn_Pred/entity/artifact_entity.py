@@ -40,6 +40,9 @@ class ModelTrainerArtifact:
     trained_conf_matrix: Path = None
     trained_roc_plot: Path = None
     trained_shap_dir: Path = None
+    important_feat_csv_path = None
+    important_feat_plot: Path = None
+    lift_gain_csv_path: Path = None
     expected_accuracy:float = 0.6
     overfit_underfit_threshold:float = 0.05
 

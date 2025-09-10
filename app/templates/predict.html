@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %} Churn Prediction - App{% endblock %}
+
+{% block content %}
+  <header>
+    <h1>⚡ Churn Predictor App</h1>
+    <p>Predict customer churn in real-time or in batch</p>
+  </header>
+<main class="grid-container">
+  <!-- LEFT COLUMN -->
+  <section class="left-column">
+  <div class="form-box">
+    <h2>🔍 Single Prediction</h2>
+    <button id="toggle-single-form-btn" type="button" class="btn">Single Prediction (Input Form)</button>
+    <form id="single-form" action="/predict_form" method="post" class="single-form" style="margin-top: 20px;">
+
+
+        <input type="number" name="CreditScore" placeholder="Credit Score" required>
+
+        <select name="Geography" required>
+            <option value="">Select Country</option>
+            <option value="0">France</option>
+            <option value="1">Germany</option>
+            <option value="2">Spain</option>
+          </select>
+
+        <select name="Gender" required>
+            <option value="">Select Gender</option>
+            <option value="0">Female</option>
+            <option value="1">Male</option>
+          </select>
+
+        <input type="number" name="Age" placeholder="Age" required>
+        <input type="number" name="Tenure" placeholder="Tenure" required>
+        <input type="number" name="Balance" placeholder="Balance" required>
+        <input type="number" name="NumOfProducts" placeholder="No. of Products" required>
+        <input type="number" name="HasCrCard" placeholder="Has Credit Card (0 or 1)" required>
+        <input type="number" name="IsActiveMember" placeholder="Is Active Member (0 or 1)" required>
+        <input type="number" name="EstimatedSalary" placeholder="Estimated Salary" required>
+
+    <button type="submit" class="btn">Predict</button>
+  </form>
+</div>
+
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const toggleBtn = document.getElementById("toggle-single-form-btn");
+    const singleForm = document.getElementById("single-form");
+
+    toggleBtn.addEventListener("click", () => {
+      if (singleForm.classList.contains("show")) {
+        singleForm.classList.remove("show");
+        toggleBtn.textContent = "Single Prediction (Input Form)";
+      } else {
+        singleForm.classList.add("show");
+        toggleBtn.textContent = "Hide Single Prediction Form";
+      }
+    });
+  });
+  </script>
+
+
+
+    <!-- BATCH PREDICTION BOX -->
+    <div class="form-box">
+      <h2>📁 Batch Prediction</h2>
+      <form id="batch-form" action="/predict_batch" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" accept=".csv" required />
+        <button type="submit">Upload and Predict</button>
+      </form>
+
+      <div id="download-box" class="download-section" style="display:none;">
+        <p>🎉 Batch predictions completed!</p>
+        <a href="#" id="download-link" class="download-btn" download>⬇️ Download Predictions</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- RIGHT COLUMN -->
+  <section class="right-column">
+    <div class="result-box">
+      <h2>📊 Results</h2>
+      <div id="result-content">
+        {% if result %}
+          {% if result.error %}
+            <p style="color:red;">❌ Error: {{ result.error }}</p>
+          {% else %}
+            <p>🔮 Prediction: <strong>{{ result.prediction }}</strong></p>
+            <p>📈 Churn Probability: <strong>{{ result.churn_probability }}%</strong></p>
+          {% endif %}
+        {% else %}
+          Select a prediction method to see results.
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="feedback-box">
+      <h2>💬 Feedback</h2>
+      <form action="/feedback" method="post">
+        <input type="text" name="feedback" placeholder="Your feedback..." maxlength="250" required />
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  </section>
+</main>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const batchForm = document.getElementById("batch-form");
+    const resultContent = document.getElementById("result-content");
+
+    if (batchForm) {
+      batchForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const formData = new FormData(batchForm);
+        resultContent.innerText = "⏳ Predicting in progress...";
+
+        try {
+          const response = await fetch("/predict_batch", {
+            method: "POST",
+            body: formData
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            document.getElementById("download-link").href = data.download_url;
+            document.getElementById("download-box").style.display = "block";
+            resultContent.innerText = "✅ Prediction done! Click below to download.";
+          } else {
+            resultContent.innerText = "❌ Error during prediction.";
+          }
+        } catch (err) {
+          resultContent.innerText = "❌ Failed to connect to server.";
+        }
+      });
+    }
+</script>
+{% endblock %}
