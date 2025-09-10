@@ -26,26 +26,30 @@ from Churn_Pred.components.data_validation import DataValidationConfig, DataVali
 from Churn_Pred.components.data_transformation import DataTransformationConfig, DataTransformation
 from Churn_Pred.entity.artifact_entity import DataTransformationArtifact,DataIngestionArtifact,DataValidationArtifact,ModelTrainerArtifact
 from Churn_Pred.utils import get_lift_status, get_overfit_warning
-
-
-import mlflow
-import mlflow.sklearn
-from mlflow.models.signature import infer_signature
-import dagshub  # tracking os million oof experiment virtually via onnecting the github repository
-
-dagshub.init(repo_owner='stat.data247', repo_name='customer-churn-ml', mlflow=True)
-
 from imblearn.pipeline import Pipeline as ImbPipeline
 from imblearn.combine import SMOTETomek
 from collections import Counter
 
 import mlflow
+import mlflow.sklearn
+from mlflow.models.signature import infer_signature
+import dagshub  # tracking your experiment via DagsHub repository
 
+# Initialize DagsHub for experiment tracking
+dagshub.init(repo_owner='stat.data247', repo_name='customer-churn-ml', mlflow=True)
+
+# Set the MLflow tracking URI to the DagsHub repository
+mlflow.set_tracking_uri("https://dagshub.com/stat.data247/customer-churn-ml.git")
+
+# Define your experiment name
 experiment_name = "ChurnPredictionModels"
+
 # Check if the experiment exists, if not, create it
 experiment = mlflow.get_experiment_by_name(experiment_name)
 if experiment is None:
     mlflow.create_experiment(experiment_name)
+
+# Set the experiment
 mlflow.set_experiment(experiment_name)
 
 
@@ -804,8 +808,7 @@ if __name__ == "__main__":
     logging.info(f"Data Transformation Artifact: {transformation_artifact}\n")
 
     # Step 4: Training model data using the artifact from Data TRANSFORMATION
-    mlflow.set_tracking_uri("https://dagshub.com/stat.data247/customer-churn-ml.git")
-    mlflow.set_experiment("ChurnPredictionModels")
+    
     # model_trainer_config = ModelTrainerConfig()
     # model_trainer = ModelTrainer(config=model_trainer_config, data_transformation_artifact=transformation_artifact)
     # model_trainer_artifact = model_trainer.train_baseline_models()
