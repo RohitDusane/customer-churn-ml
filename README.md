@@ -65,7 +65,7 @@ Churn_Pred/
   - **F1 Score**
   - **ROC AUC**![ROC](https://github.com/RohitDusane/customer-churn-ml/blob/main/Churn_Pred/screenshot/XGBoost_roc_curve.png)
   - **Top-Decile Lift**
-  - **Feature Importance** ![Feature Importance](Churn_Pred\screenshot\XGBoost_feature_importance.png)
+  - **Feature Importance** ![Feature Importance](https://github.com/RohitDusane/customer-churn-ml/blob/main/Churn_Pred/screenshot/XGBoost_feature_importance.png)
 - Tracks all experiments via **MLflow**
 - Selects and saves the best-performing model
 
@@ -133,14 +133,14 @@ Access App at: `http://localhost:8000`
 
 ### 2. Access the Dashboard:
 
-- Open a browser and go to http://localhost:5000 ![MLflow Dashboard](Churn_Pred\screenshot\mlflow dashbaord.png)
+- Open a browser and go to http://localhost:5000 ![MLflow Dashboard](https://github.com/RohitDusane/customer-churn-ml/blob/main/Churn_Pred/screenshot/mlflow dashbaord.png)
 - This will open the MLflow UI where you can see all of your logged experiments, parameters, metrics, and models.
 
 ---
 
 ## 📸 Example Output
 
-![conf_matrix](Churn_Pred\screenshot\XGBoost_conf_matrix.png)
+![conf_matrix](https://github.com/RohitDusane/customer-churn-ml/blob/main/Churn_Pred/screenshot/XGBoost_conf_matrix.png)
 
 
 ---
@@ -150,8 +150,8 @@ Access App at: `http://localhost:8000`
 
 SMOTETomek is a powerful tool to address class imbalance by both increasing the minority class size and cleaning up the dataset by removing noisy or borderline examples. By doing so, it enables models to perform better in imbalanced settings, leading to improved generalization and more accurate predictions. It is especially useful in tasks like fraud detection, medical diagnosis, and anomaly detection where minority class instances are critical for model performance but are often underrepresented.
 
-![Before SMOTETomek](Churn_Pred\screenshot\Before SMOTETomek.png)
-![After SMOTETomek](Churn_Pred\screenshot\After Smotetomek.png)
+![Before SMOTETomek](https://github.com/RohitDusane/customer-churn-ml/blob/main/Churn_Pred/screenshot/Before SMOTETomek.png)
+![After SMOTETomek](https://github.com/RohitDusane/customer-churn-ml/blob/main/Churn_Pred/screenshot/After Smotetomek.png)
 
 
 ---
@@ -178,7 +178,7 @@ By default, the best model is selected based on **F1 Score** and saved for deplo
 ## 👨‍💻 Author
 
 * **Rohit Dusane**
-* [LinkedIn](#) | [GitHub](#)
+* [LinkedIn](https://www.linkedin.com/in/rohit-dusane/) | [GitHub](https://github.com/RohitDusane/)
 
 
 ---
