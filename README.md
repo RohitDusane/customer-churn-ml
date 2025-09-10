@@ -151,7 +151,7 @@ Access App at: `http://localhost:8000`
 SMOTETomek is a powerful tool to address class imbalance by both increasing the minority class size and cleaning up the dataset by removing noisy or borderline examples. By doing so, it enables models to perform better in imbalanced settings, leading to improved generalization and more accurate predictions. It is especially useful in tasks like fraud detection, medical diagnosis, and anomaly detection where minority class instances are critical for model performance but are often underrepresented.
 
 ![Before SMOTETomek](https://github.com/RohitDusane/customer-churn-ml/blob/main/Churn_Pred/screenshot/Before%20SMOTETomek.png)
-![After SMOTETomek](https://github.com/RohitDusane/customer-churn-ml/blob/main/Churn_Pred/screenshot/After%Smotetomek.png)
+![After SMOTETomek](https://github.com/RohitDusane/customer-churn-ml/blob/main/Churn_Pred/screenshot/After%20Smotetomek.png)
 
 
 ---
