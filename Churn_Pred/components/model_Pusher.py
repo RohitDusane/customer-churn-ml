@@ -39,15 +39,16 @@ import dagshub  # tracking your experiment via DagsHub repository
 dagshub.init(repo_owner='stat.data247', repo_name='customer-churn-ml', mlflow=True)
 
 # Set the MLflow tracking URI to the DagsHub repository
-mlflow.set_tracking_uri("https://dagshub.com/stat.data247/customer-churn-ml.git")
+mlflow.set_tracking_uri("https://dagshub.com/stat.data247/customer-churn-ml.mlflow")
 
 # Define your experiment name
-experiment_name = "ChurnPredictionModels"
+experiment_name = "Churn_Prediction_Models"
 
 # Check if the experiment exists, if not, create it
 experiment = mlflow.get_experiment_by_name(experiment_name)
 if experiment is None:
     mlflow.create_experiment(experiment_name)
+    experiment = mlflow.get_experiment_by_name(experiment_name)
 
 # Set the experiment
 mlflow.set_experiment(experiment_name)
@@ -166,11 +167,18 @@ class ModelTrainer:
                     
                     signature = infer_signature(X_test, y_test_pred)
                     # mlflow.sklearn.log_model(model, name="model", input_example=X_test.iloc[:5], signature=signature)
+                    # mlflow.sklearn.log_model(
+                    #     sk_model=pipeline,
+                    #     name="model",
+                    #     input_example=X_test.iloc[:5],
+                    #     signature=signature
+                    # )
+
                     mlflow.sklearn.log_model(
-                        sk_model=pipeline,
-                        name="model",
-                        input_example=X_test.iloc[:5],
-                        signature=signature
+                        sk_model=pipeline,           # Your model
+                        artifact_path="models",      # Log model under the "models" directory
+                        input_example=X_test.iloc[:5],  # Example input for signature
+                        signature=signature          # Model signature
                     )
 
                     report.append({
@@ -380,11 +388,18 @@ class ModelTrainer:
                     mlflow.log_param("Overfit/Underfit Warning", overfit_warning)
 
                     signature = infer_signature(X_test, y_test_pred)
+                    # mlflow.sklearn.log_model(
+                    #     sk_model=best_pipeline,
+                    #     name="model",
+                    #     input_example=X_test.iloc[:5],
+                    #     signature=signature
+                    # )
+
                     mlflow.sklearn.log_model(
-                        sk_model=best_pipeline,
-                        name="model",
-                        input_example=X_test.iloc[:5],
-                        signature=signature
+                        sk_model=best_pipeline,           # Your BEST model
+                        artifact_path="models",      # Log model under the "models" directory
+                        input_example=X_test.iloc[:5],  # Example input for signature
+                        signature=signature          # Model signature
                     )
 
                     report.append({

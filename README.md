@@ -63,9 +63,9 @@ Churn_Pred/
 - Trains baseline models (RandomForest, XGBoost, LogisticRegression, etc.)
 - Evaluates using:
   - **F1 Score**
-  - **ROC AUC**![ROC](screenshot\XGBoost_roc_curve.png)
+  - **ROC AUC**![ROC](Churn_Pred\screenshot\XGBoost_roc_curve.png)
   - **Top-Decile Lift**
-  - **Feature Importance** ![Feature Importance](screenshot\XGBoost_feature_importance.png)
+  - **Feature Importance** ![Feature Importance](Churn_Pred\screenshot\XGBoost_feature_importance.png)
 - Tracks all experiments via **MLflow**
 - Selects and saves the best-performing model
 
@@ -117,14 +117,30 @@ Access App at: `http://localhost:8000`
 
 * Metrics, plots, confusion matrices
 * Trained models stored in: `artifacts/model_trained`
-* MLflow dashboard: `http://localhost:5000` (if MLflow UI is running)
+* MLflow dashboard: `http://localhost:5000` (in terminal `mlflow ui`) 
 
+## Steps to View the MLflow Dashboard Locally:
+
+### 1. Start MLflow UI:
+
+- Open a terminal (or command prompt).
+- Navigate to your project folder (e.g., `Churn_Pred`).
+- Run the command:
+
+  ```bash
+  mlflow ui
+  ```
+
+### 2. Access the Dashboard:
+
+- Open a browser and go to http://localhost:5000 ![MLflow Dashboard](Churn_Pred\screenshot\mlflow dashbaord.png)
+- This will open the MLflow UI where you can see all of your logged experiments, parameters, metrics, and models.
 
 ---
 
 ## 📸 Example Output
 
-![conf\_matrix](screenshot\XGBoost_conf_matrix.png)
+![conf_matrix](Churn_Pred\screenshot\XGBoost_conf_matrix.png)
 
 
 ---
@@ -134,8 +150,8 @@ Access App at: `http://localhost:8000`
 
 SMOTETomek is a powerful tool to address class imbalance by both increasing the minority class size and cleaning up the dataset by removing noisy or borderline examples. By doing so, it enables models to perform better in imbalanced settings, leading to improved generalization and more accurate predictions. It is especially useful in tasks like fraud detection, medical diagnosis, and anomaly detection where minority class instances are critical for model performance but are often underrepresented.
 
-![Before SMOTETomek](screenshot\Before SMOTETomek.png)
-![After SMOTETomek](screenshot\After Smotetomek.png)
+![Before SMOTETomek](Churn_Pred\screenshot\Before SMOTETomek.png)
+![After SMOTETomek](Churn_Pred\screenshot\After Smotetomek.png)
 
 
 ---
