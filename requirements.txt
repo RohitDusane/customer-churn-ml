@@ -19,4 +19,6 @@ xlsxwriter
 python-dotenv
 imblearn
 dagshub
+pytest
+pytest-cov
 #-e .
