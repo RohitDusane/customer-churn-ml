@@ -10,6 +10,10 @@ prediction_app_logs/*
 myenv_environment.yml
 prj_str.py
 setup.py
+mlruns/
+artifacts/
+*.pl
+*.joblib
 
 
 __pycache__/
