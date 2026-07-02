@@ -179,17 +179,14 @@ The best model after hypertuning was **XgBoost** is selected based on **F1 Score
 
 ---
 
-
 ## 👨‍💻 Author
 
-* **Rohit Dusane**
-* [LinkedIn](https://www.linkedin.com/in/rohit-dusane/) | [GitHub](https://github.com/RohitDusane/)
+**Rohit Dusane** — ML Engineer & Healthcare AI Specialist
+📧 hello@rohitdusane.dev
+💼 [LinkedIn](https://linkedin.com/in/rohit-dusane)
+🌐 [Portfolio](https://YOUR-PORTFOLIO-URL)
 
+## 📄 License
 
----
-
-## 🏁 License
-
-MIT License
-
+MIT License — see [LICENSE](LICENSE)
 ---
