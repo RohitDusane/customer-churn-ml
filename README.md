@@ -1,9 +1,9 @@
+# 🔍 Customer Churn Prediction Pipeline (End-to-End ML Project)
 [![CI](https://github.com/RohitDusane/customer-churn-ml/actions/workflows/ci.yml/badge.svg)](...)
 [![Python 3.11](https://img.shields.io/badge/Python-3.11-blue)]()
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue)]()
 [![MLflow](https://img.shields.io/badge/MLflow-Tracked-orange)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
-# 🔍 Customer Churn Prediction Pipeline (End-to-End ML Project)
 
 This project demonstrates a full-scale machine learning pipeline to predict customer churn using Python, scikit-learn, XGBoost, and MLflow. It includes data ingestion, validation, transformation, model training, evaluation, and deployment via **FastAPI**.
 
