@@ -20,6 +20,9 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
 
+      - name: Add project to PYTHONPATH
+        run: echo "PYTHONPATH=$GITHUB_WORKSPACE" >> $GITHUB_ENV
+
       - name: Run tests
         run: |
           python -m pytest tests/ -v --cov=Churn_Pred --cov-report=xml
