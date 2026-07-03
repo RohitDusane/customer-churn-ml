@@ -77,13 +77,6 @@ class ModelTrainer:
         self.config = config
         self.data_transformation_artifact = data_transformation_artifact
 
-    # def save_model_trainer_artifact(self, artifact: ModelTrainerArtifact, filepath: str):
-    #     with open(filepath, 'w') as f:
-    #         json.dump(artifact.__dict__, f, indent=4)
-    #     print(f"ModelTrainerArtifact saved at {filepath}")
-
-
-
     def train_baseline_models(self):
         logging.info('🚀 Starting Baseline Model Training \n')
         try:
@@ -117,7 +110,7 @@ class ModelTrainer:
                     logging.info(f"\t🔧 Training {model_name} (Baseline)")
                     pipeline = ImbPipeline([
                         ('sampling', SMOTETomek(random_state=42)),
-                        ('classifier', XGBClassifier(eval_metric='logloss'))
+                        ('classifier', model)
                     ])
                     pipeline.fit(X_train, y_train)
 
@@ -149,7 +142,7 @@ class ModelTrainer:
 
                     cm = confusion_matrix(y_test, y_test_pred)
                     self.save_all_model_outputs(model_name, pipeline, cm, roc_auc, X_test, y_test)
-        
+                    self.save_shap_plots(pipeline, X_test, model_name)
 
                     mlflow.log_metric("Train Accuracy", train_acc)
                     mlflow.log_metric("Test Accuracy", test_acc)
@@ -162,17 +155,6 @@ class ModelTrainer:
                     mlflow.log_metric("Lift Score", lift_score)
                     mlflow.log_param("Lift Status", lift_status)  
                     mlflow.log_param("Overfit/Underfit Warning",overfit_warning)
-
-                    # mlflow.sklearn.log_model(pipeline, name="model")
-                    
-                    signature = infer_signature(X_test, y_test_pred)
-                    # mlflow.sklearn.log_model(model, name="model", input_example=X_test.iloc[:5], signature=signature)
-                    # mlflow.sklearn.log_model(
-                    #     sk_model=pipeline,
-                    #     name="model",
-                    #     input_example=X_test.iloc[:5],
-                    #     signature=signature
-                    # )
 
                     mlflow.sklearn.log_model(
                         sk_model=pipeline,           # Your model
@@ -230,7 +212,6 @@ class ModelTrainer:
             best_model_name = best_model_row["Model"]
             best_pipeline = trained_pipelines[best_model_name]
             
-
             # Define model save path
             trained_model_filepath = os.path.join(self.config.trained_model_dir, f"{best_model_name}_model_pusher.pkl")
 
@@ -260,13 +241,9 @@ class ModelTrainer:
                 recall=best_model_row['Recall'],
                 roc_auc=best_model_row['ROC AUC']
             )
-
             return trained_pipelines, report_df, model_trainer_artifact
-
         except Exception as e:
             raise CustomException(e, sys)
-
-
 
     def train_tuned_models(self):
         logging.info('🔍 Starting Hyperparameter Tuning...')
@@ -340,14 +317,7 @@ class ModelTrainer:
 
                     grid.fit(X_train, y_train)
                     best_pipeline = grid.best_estimator_
-                    # grid.fit(X_train, y_train)
 
-                    # best_model = grid.best_estimator_
-
-                    # pipeline = Pipeline([
-                    #     ('classifier', best_model)
-                    # ])
-                    # pipeline.fit(X_train, y_train)
 
                     y_train_pred = best_pipeline.predict(X_train)
                     y_test_pred = best_pipeline.predict(X_test)
@@ -371,6 +341,8 @@ class ModelTrainer:
 
                     cm = confusion_matrix(y_test, y_test_pred)
                     self.save_all_model_outputs(model_name, best_pipeline, cm, roc_auc, X_test, y_test)
+                    self.save_shap_plots(best_pipeline, X_test, model_name)
+                    mlflow.log_artifacts(str(self.config.trained_shap_dir), artifact_path="SHAP")
 
                     # mlflow.log_params(grid.best_params_)
                     for k, v in grid.best_params_.items():
@@ -388,12 +360,6 @@ class ModelTrainer:
                     mlflow.log_param("Overfit/Underfit Warning", overfit_warning)
 
                     signature = infer_signature(X_test, y_test_pred)
-                    # mlflow.sklearn.log_model(
-                    #     sk_model=best_pipeline,
-                    #     name="model",
-                    #     input_example=X_test.iloc[:5],
-                    #     signature=signature
-                    # )
 
                     mlflow.sklearn.log_model(
                         sk_model=best_pipeline,           # Your BEST model
@@ -485,97 +451,6 @@ class ModelTrainer:
         except Exception as e:
             raise CustomException(e, sys)
 
-
-    # def train_tuned_models(self):
-    #     logging.info('🔍 Starting Hyperparameter Tuning...')
-    #     try:
-    #         # Load data
-    #         preprocessor = joblib.load(self.data_transformation_artifact.transformed_preprocessor_obj_filepath)
-    #         train_df = pd.read_csv(self.data_transformation_artifact.transformed_train_df_filepath)
-    #         test_df = pd.read_csv(self.data_transformation_artifact.transformed_test_df_filepath)
-
-    #         X_train = train_df.iloc[:, :-1]
-    #         y_train = train_df.iloc[:, -1]
-    #         X_test = test_df.iloc[:, :-1]
-    #         y_test = test_df.iloc[:, -1]
-
-    #         tuned_models = {
-    #             "RandomForest": {
-    #                 "model": RandomForestClassifier(),
-    #                 "params": {
-    #                     "n_estimators": [50, 100],
-    #                     "max_depth": [5, 10]
-    #                 }
-    #             },
-    #             "DecisionTree": {
-    #                 "model": DecisionTreeClassifier(),
-    #                 "params": {
-    #                     "max_depth": [3, 5, 10]
-    #                 }
-    #             },
-    #             "LogisticRegression": {
-    #                 "model": LogisticRegression(max_iter=1000),
-    #                 "params": {
-    #                     "C": [0.01, 0.1, 1, 10]
-    #                 }
-    #             },
-    #             "XGBoost": {
-    #                 "model": XGBClassifier(use_label_encoder=False, eval_metric='logloss'),
-    #                 "params": {
-    #                     "n_estimators": [50, 100],
-    #                     "max_depth": [3, 6]
-    #                 }
-    #             }
-    #         }
-
-    #         report = []
-
-    #         for model_name, config in tuned_models.items():
-    #             with mlflow.start_run(run_name=f"Tuned-{model_name}"):
-    #                 grid = GridSearchCV(config["model"], config["params"], cv=5, scoring='f1', n_jobs=-1)
-    #                 grid.fit(X_train, y_train)
-
-    #                 best_model = grid.best_estimator_
-    #                 y_pred = best_model.predict(X_test)
-
-    #                 test_acc = accuracy_score(y_test, y_pred)
-    #                 class_report = classification_report(y_test, y_pred, output_dict=True)
-    #                 f1 = class_report['1'].get('f1-score', 0)
-    #                 precision = class_report['1'].get('precision', 0)
-    #                 recall = class_report['1'].get('recall', 0)
-    #                 roc_auc = self.calculate_roc_auc(best_model, X_test, y_test)
-
-    #                 lift_score = self.plot_lift_gain(model_name, best_model, X_test, y_test)
-
-    #                 mlflow.log_params(grid.best_params_)
-    #                 mlflow.log_metric("Test Accuracy", test_acc)
-    #                 mlflow.log_metric("F1 Score", f1)
-    #                 mlflow.log_metric("Precision", precision)
-    #                 mlflow.log_metric("Recall", recall)
-    #                 mlflow.log_metric("ROC AUC", roc_auc)
-    #                 mlflow.log_metric("Lift Score", lift_score)
-
-    #                 mlflow.sklearn.log_model(best_model, artifact_path="model")
-
-    #                 report.append({
-    #                     "Model": model_name,
-    #                     "Best Params": json.dumps(grid.best_params_),
-    #                     "Test Accuracy": test_acc,
-    #                     "F1": f1,
-    #                     "Precision": precision,
-    #                     "Recall": recall,
-    #                     "ROC AUC": roc_auc,
-    #                     "Lift Score": lift_score
-    #                 })
-
-    #         report_df = pd.DataFrame(report)
-    #         report_path = Path("artifacts/model_trained/metrics/tuned_model_comparison.csv")
-    #         report_df.to_csv(report_path, index=False)
-    #         logging.info(f"📊 Tuned model report saved: {report_path}")
-
-    #     except Exception as e:
-    #         raise CustomException(e, sys)
-
     def calculate_roc_auc(self, pipeline, X_test, y_test):
         try:
             if hasattr(pipeline.named_steps['classifier'], 'predict_proba'):
@@ -601,7 +476,6 @@ class ModelTrainer:
         plt.title(title)
         plt.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
         plt.show()
-
 
     def plot_confusion_matrix(self, model_name, cm):
         self.config.trained_conf_matrix.mkdir(parents=True, exist_ok=True)
@@ -638,8 +512,6 @@ class ModelTrainer:
         plt.close()
 
         logging.info(f"✅ Saved ROC curve: {path}")
-
-
 
     def plot_lift_gain(self, model_name, pipeline, X_test, y_test):
         # Step 1: Get predicted probabilities for the positive class (churn = 1)
@@ -685,7 +557,6 @@ class ModelTrainer:
         # Return the top decile lift score as a rounded value
         return round(top_decile_lift, 3)
         
-
     def generate_conclusion(self, model_name, overfit, below_expected, lift_score, f1, roc_auc):
         issues = []
         if below_expected:
@@ -704,13 +575,11 @@ class ModelTrainer:
 
         return f"{model_name} Summary: " + " | ".join(issues)
 
-
     def save_model(self, model_name, pipeline):
         path = self.config.trained_model_filepath.parent / f"{model_name}.pkl"
         self.config.trained_model_filepath.parent.mkdir(parents=True, exist_ok=True)
         joblib.dump(pipeline, path)
         # logging.info(f"✅ Model saved: {path}")
-    
     
     def save_combined_excel(
         self,
@@ -749,8 +618,6 @@ class ModelTrainer:
         except Exception as e:
             logging.error(f"❌ Failed to save combined Excel workbook: {e}")
             raise CustomException(e, sys)
-
-
 
     def plot_feature_importance(self, model, X, model_name, top_n=10):
         feature_df = None
@@ -799,10 +666,105 @@ class ModelTrainer:
         logging.info(f"✅ Feature importance plot saved for {model_name}\n")
         return feature_df
 
+    def save_shap_plots(self, pipeline, X_test, model_name):
+        """
+        Generate SHAP Summary, Bar and Waterfall plots.
+        Supports RandomForest, XGBoost and DecisionTree.
+        """
+        try:
+            model = pipeline.named_steps["classifier"]
+            if not (
+                hasattr(model, "feature_importances_")
+                or model.__class__.__name__.startswith("XGB")
+            ):
+                logging.info(f"Skipping SHAP for {model_name}")
+                return
+            
+            save_dir = self.config.trained_shap_dir / model_name
+            save_dir.mkdir(parents=True, exist_ok=True)
 
+            # sample for speed
+            X_sample = X_test.sample(min(200, len(X_test)), random_state=42)
+            explainer = shap.TreeExplainer(model)
+            shap_values = explainer.shap_values(X_sample)
+            
+            if isinstance(shap_values, list):
+                np.save(save_dir / f"{model_name}_shap_values.npy", shap_values[1])
+                # shap_values = shap_values[1]
+            else:
+                np.save(save_dir / f"{model_name}_shap_values.npy", shap_values)
 
+            expected_value = explainer.expected_value
+            if isinstance(expected_value, (list, np.ndarray)):
+                expected_value = expected_value[1]
 
-        
+            joblib.dump(expected_value, save_dir / f"{model_name}_expected_value.pkl")
+
+            explanation = explainer(X_sample)
+            joblib.dump(explanation, save_dir / f"{model_name}_explanation.pkl")
+            
+            ####################################################
+            # Save SHAP Feature Importance CSV
+            ####################################################
+
+            if isinstance(shap_values, list):
+                values = shap_values[1]
+            else:
+                values = shap_values
+
+            importance = np.abs(values).mean(axis=0)
+
+            feature_importance = pd.DataFrame({
+                "Feature": X_sample.columns,
+                "MeanAbsSHAP": importance})
+
+            feature_importance = feature_importance.sort_values(by="MeanAbsSHAP", ascending=False)
+            feature_importance.to_csv(save_dir / f"{model_name}_SHAP_importance.csv", index=False)
+
+            ############################
+            # Summary Plot
+            ############################
+            plt.figure(figsize=(12,8))
+            shap.summary_plot(shap_values, X_sample, show=False)
+            plt.tight_layout()
+            plt.savefig(save_dir / f"{model_name}_SHAP_summary.png",dpi=300, bbox_inches="tight")
+            plt.close()
+
+            ############################
+            # Bar Plot
+            ############################
+            plt.figure(figsize=(10,7))
+            shap.summary_plot(shap_values, X_sample, plot_type="bar", show=False)
+            plt.tight_layout()
+            plt.savefig(save_dir / f"{model_name}_SHAP_bar.png",dpi=300, bbox_inches="tight")
+            plt.close()
+
+            ####################################################
+            # Dependence Plot
+            ####################################################
+            top_feature = feature_importance.iloc[0]["Feature"]
+
+            plt.figure(figsize=(10,7))
+            shap.dependence_plot(top_feature, values, X_sample, show=False)
+            plt.tight_layout()
+
+            plt.savefig(save_dir / f"{model_name}_SHAP_dependence_{top_feature}.png", dpi=300, bbox_inches="tight"
+            plt.close()
+
+            ############################
+            # Waterfall
+            ############################
+            explanation = explainer(X_sample)
+            shap.plots.waterfall(explanation[0], show=False)
+
+            plt.savefig(save_dir / f"{model_name}_SHAP_waterfall.png", dpi=300, bbox_inches="tight")
+
+            plt.close()
+            logging.info(f"Saved SHAP plots for {model_name}")
+
+        except Exception as e:
+            logging.warning(f"SHAP failed for {model_name}: {e}")
+
 if __name__ == "__main__":
     # Step 1: Ingest the data
     ingestion_config = DataIngestionConfig()
