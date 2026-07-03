@@ -26,5 +26,24 @@ __pycache__/
 .vscode/
 .idea/
 index.html
-my_entire)pipeline.py
-project dosumentation.md
+my_entire_pipeline.py
+project_documentation.md
+# Python
+__pycache__/
+*.pyc
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Conda environments (if kept in project)
+.conda/
+
+# VS Code
+.vscode/
+
+# ML artifacts
+artifacts/
+logs/
+mlruns/

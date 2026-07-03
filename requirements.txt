@@ -21,4 +21,5 @@ imblearn
 dagshub
 pytest
 pytest-cov
+joblib
 #-e .
