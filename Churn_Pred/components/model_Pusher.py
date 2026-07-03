@@ -766,54 +766,110 @@ class ModelTrainer:
             logging.warning(f"SHAP failed for {model_name}: {e}")
 
 if __name__ == "__main__":
-    # Step 1: Ingest the data
-    ingestion_config = DataIngestionConfig()
-    ingestion = DataIngestion(ingestion_config)
-    ingestion_artifact = ingestion.initiate_data_ingestion()
-    logging.info(f"Data Ingestion Artifact: {ingestion_artifact}\n")
+    try:
+        logging.info("=" * 80)
+        logging.info("STARTING READMISSION PREDICTION PIPELINE")
+        logging.info("=" * 80)
 
-    # Step 2: Validate the data using the artifact from ingestion
-    validation_config = DataValidationConfig()
-    validation = DataValidation(config=validation_config, data_ingestion_artifact=ingestion_artifact)
-    validation_artifact = validation.initiate_data_validation()
-    logging.info(f"Data Validation Artifact: {validation_artifact}\n")
+        # ------------------------------------------------------------------
+        # Step 1 : Data Ingestion
+        # ------------------------------------------------------------------
+        ingestion_config = DataIngestionConfig()
+        ingestion = DataIngestion(ingestion_config)
+        ingestion_artifact = ingestion.initiate_data_ingestion()
+        logging.info(f"Data Ingestion Artifact:\n{ingestion_artifact}")
 
-    # Step 3: Transform the data using the artifact from Data VALIDATION
-    transformation_config = DataTransformationConfig()
-    transformation = DataTransformation(config=transformation_config, data_valid_artifact=validation_artifact)
-    transformation_artifact = transformation.initiate_data_transformation()
-    logging.info(f"Data Transformation Artifact: {transformation_artifact}\n")
+        # ------------------------------------------------------------------
+        # Step 2 : Data Validation
+        # ------------------------------------------------------------------
+        validation_config = DataValidationConfig()
+        validation = DataValidation(config=validation_config, data_ingestion_artifact=ingestion_artifact)
+        validation_artifact = validation.initiate_data_validation()
+        logging.info(f"Data Validation Artifact:\n{validation_artifact}")
 
-    # Step 4: Training model data using the artifact from Data TRANSFORMATION
-    
-    # model_trainer_config = ModelTrainerConfig()
-    # model_trainer = ModelTrainer(config=model_trainer_config, data_transformation_artifact=transformation_artifact)
-    # model_trainer_artifact = model_trainer.train_baseline_models()
-    # logging.info(f"Model Trainer Artifact: {model_trainer_artifact}\n")
+        # ------------------------------------------------------------------
+        # Step 3 : Data Transformation
+        # ------------------------------------------------------------------
+        transformation_config = DataTransformationConfig()
+        transformation = DataTransformation(config=transformation_config, data_valid_artifact=validation_artifact)
+        transformation_artifact = transformation.initiate_data_transformation()
+        logging.info(f"Data Transformation Artifact:\n{transformation_artifact}")
 
-    model_trainer_config = ModelTrainerConfig()
-    model_trainer = ModelTrainer(config=model_trainer_config, data_transformation_artifact=transformation_artifact)
+        logging.info(f"Training Dataset : {transformation_artifact.transformed_train_file_path}")
+        logging.info(f"Testing Dataset : {transformation_artifact.transformed_test_file_path}")
+        # ------------------------------------------------------------------
+        # Step 4 : Model Training
+        # ------------------------------------------------------------------
+        trainer_config = ModelTrainerConfig()
+        trainer = ModelTrainer(config=trainer_config, data_transformation_artifact=transformation_artifact)
+        logging.info("=" * 80)
+        logging.info("TRAINING BASELINE MODELS")
+        logging.info("=" * 80)
+        (
+            baseline_models,
+            baseline_report,
+            baseline_artifact
+        ) = trainer.train_baseline_models()
+        logging.info("Baseline training completed.")
+        logging.info("=" * 80)
+        logging.info("TRAINING TUNED MODELS")
+        logging.info("=" * 80)
 
-    # 🚀 Train Baseline Models
-    baseline_pipelines, baseline_report_df, baseline_artifact = model_trainer.train_baseline_models()
-    logging.info(f"📦 Baseline Model Trainer Artifact: {baseline_artifact}\n")
+        (
+            tuned_models,
+            tuned_report,
+            tuned_artifact
+        ) = trainer.train_tuned_models()
+        logging.info("Hyperparameter tuning completed.")
 
-    # 🔍 Train Tuned Models
-    tuned_pipelines, tuned_report_df, tuned_artifact = model_trainer.train_tuned_models()
-    logging.info(f"⚙️ Tuned Model Trainer Artifact: {tuned_artifact}\n")
+        best_model = tuned_report.sort_values(by="ROC_AUC", ascending=False).iloc[0]
+        logging.info(
+            f"Best tuned model: {best_model['Model']} "
+            f"(ROC-AUC={best_model['ROC_AUC']:.4f})")
+        
+        best_model.to_frame().T.to_csv("artifacts/model_trained/metrics/best_model.csv", index=False)
 
-    # (Optional) Save a combined model comparison
-    combined_report_df = pd.concat([
-        baseline_report_df.assign(TrainingType="Baseline"),
-        tuned_report_df.assign(TrainingType="Tuned")
-    ])
+        pipeline_metadata = {
+            "best_model": best_model["Model"],
+            "roc_auc": float(best_model["ROC_AUC"]),
+            "execution_time": time.perf_counter() - pipeline_start,
+            "timestamp": datetime.now().isoformat()
+        }
 
-    combined_excel_path = "artifacts/model_trained/metrics/full_model_comparison.xlsx"
-    model_trainer.save_combined_excel(
-        report_df=combined_report_df,
-        output_excel_path=combined_excel_path,
-        top_features_csv="artifacts/model_trained/metrics/top_features_tuned.csv",
-        predicted_prob_csv="artifacts/model_trained/metrics/test_predicted_probabilities_tuned.csv"
-    )
+        with open("artifacts/model_trained/pipeline_metadata.json", "w") as f:
+            json.dump(pipeline_metadata,f, indent=4)
+        # ------------------------------------------------------------------
+        # Step 5 : Model Comparison
+        # ------------------------------------------------------------------
+        combined_report = pd.concat(
+            [
+                baseline_report.assign(TrainingType="Baseline"),
+                tuned_report.assign(TrainingType="Tuned")
+            ],
+            ignore_index=True
+        )
+        logging.info("\n%s", combined_report.round(4))
 
-    logging.info("✅ All model training completed successfully.")
+        trainer.save_combined_excel(
+            report_df=combined_report,
+            output_excel_path="artifacts/model_trained/metrics/full_model_comparison.xlsx",
+            top_features_csv="artifacts/model_trained/metrics/top_features_tuned.csv",
+            predicted_prob_csv="artifacts/model_trained/metrics/test_predicted_probabilities_tuned.csv"
+        )
+        logging.info("=" * 80)
+        logging.info("🎉 READMISSION PREDICTION PIPELINE COMPLETED SUCCESSFULLY")
+        logging.info("=" * 80)
+        logging.info(f"🏆 Best Model : {best_model['Model']}")
+        logging.info(f"📈 ROC-AUC    : {best_model['ROC_AUC']:.4f}")
+        logging.info("=" * 80)
+
+        logging.info("Artifacts saved to:")
+        logging.info("  artifacts/model_trained/")
+        logging.info("  artifacts/model_trained/shap/")
+        logging.info("  artifacts/model_trained/images/")
+        logging.info("  artifacts/model_trained/metrics/")
+    except Exception as e:
+        logging.exception("=" * 80)
+        logging.exception("PIPELINE FAILED")
+        logging.exception("=" * 80)
+        raise
