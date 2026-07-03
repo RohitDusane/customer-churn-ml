@@ -168,17 +168,15 @@ The best model after hypertuning was **XgBoost** is selected based on **F1 Score
 ---
 
 
-## 📍 Future Improvements
+## 🔮 Future Improvements
 
-* **Tuning Hyperparameters**:More tuning parameter on XgBoost Model
-* **Ensemble Models**: Combining the predictions of both models could help balance out the high precision and could improve your overall performance metrics.
-* **Feature Engineering**: Look into feature selection or engineering, as improving features might help improve model performance across all metrics.
-* **Model versioning** via DVC
-* **CI/CD** for automated testing and deployment
-
+- [ ] Arabic language support for UAE telecom market (bilingual churn signals)
+- [ ] Real-time Kafka stream ingestion replacing batch CSV pipeline
+- [ ] Survival analysis model (time-to-churn, not just binary churn)
+- [ ] Customer segmentation clustering + per-segment churn model
+- [ ] A/B testing framework for retention intervention strategies
 
 ---
-
 ## 👨‍💻 Author
 
 **Rohit Dusane** — ML Engineer & Healthcare AI Specialist
