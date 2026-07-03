@@ -90,105 +90,9 @@ class DataTransformation:
                 ('cat', cat_pipeline, categorical_cols),
                 ('num', num_pipeline, numeric_cols)
             ], remainder='drop', verbose=True)
-
-            # logging.info(f'Preprocessor created with numeric columns: {numeric_cols}')
-            # logging.info(f'Preprocessor created with categorical columns: {categorical_cols}')
-
-            # logging.info('Preprocessor (ColumnTransformer) constructed.')
-
-            # save_path = self.config.transformed_preprocessor_obj_filepath
-            # dir_path = os.path.dirname(save_path)
-            # os.makedirs(dir_path, exist_ok=True)  # Ensures directory exists
-            # joblib.dump(preprocessor, save_path)
-            # joblib.dump(scaler, 'artifacts/models/scaler.joblib')
-
             return preprocessor
-
         except Exception as e:
             raise CustomException(e,sys)
-        
-    # def initiate_data_transformation(self):
-    #     logging.info('Initiating Data Transformation...')
-    #     try:
-    #         logging.info("Loading ingested datasets...")
-    #         train_data = self.data_valid_artifact.valid_train_file_path
-    #         test_data = self.data_valid_artifact.valid_test_file_path
-
-    #         train_df = DataTransformation.read_data(train_data)
-    #         test_df = DataTransformation.read_data(test_data)
-
-    #         logging.info("Obtaining Preprocessor object")
-    #         preprocessor_obj = self.get_data_transformer_object(train_df)
-
-    #         TARGET_COLUMN = 'exited'
-    #         X_train = train_df.drop(columns=[TARGET_COLUMN])
-    #         y_train = train_df[TARGET_COLUMN]
-    #         X_test = test_df.drop(columns=[TARGET_COLUMN])
-    #         y_test = test_df[TARGET_COLUMN]
-
-    #         # 2. Validate Required Columns
-    #         error_messages = []
-    #         if not DataTransformation.validate_required_columns(X_train):
-    #             error_messages.append("❌ Train DataFrame is missing required columns.")
-    #         if not DataTransformation.validate_required_columns(X_test):
-    #             error_messages.append("❌ Test DataFrame is missing required columns.")
-
-    #         feature_names = preprocessor_obj.get_feature_names_out()
-    #         X_train_df = pd.DataFrame(X_train_transformed, columns=feature_names)
-    #         X_test_df = pd.DataFrame(X_test_transformed, columns=feature_names)
-
-
-    #         logging.info("Fitting and transforming training data")
-    #         X_train_transformed = preprocessor_obj.fit_transform(X_train)  # fit only on training data
-    #         logging.info("Transforming test data using fitted preprocessor")
-    #         X_test_transformed = preprocessor_obj.transform(X_test)  # reuse fitted preprocessor
-
-    #         X_train_df = pd.DataFrame(X_train_transformed, columns=X_train_transformed)
-    #         X_test_df = pd.DataFrame(X_test_transformed, columns=X_train_transformed)
-
-    #         # Add target back to the DataFrame
-    #         train_df_final = pd.concat([X_train_df, y_train.reset_index(drop=True)], axis=1)
-    #         test_df_final = pd.concat([X_test_df, y_test.reset_index(drop=True)], axis=1)
-
-    #         # Save to disk as DataFrames (e.g. CSV or Parquet)
-    #         train_df_final.to_csv('artifacts/transformed/train_df.csv', index=False)
-    #         test_df_final.to_csv('artifacts/transformed/test_df.csv', index=False)
-
-    #         # Optionally concatenate with target
-    #         train_arr = np.c_[X_train_transformed, y_train.to_numpy()]
-    #         test_arr = np.c_[X_test_transformed, y_test.to_numpy()]
-
-
-    #         # # Save the preprocessor object for later use
-    #         # os.makedirs(os.path.dirname(self.config.preprocessor_obj_filepath), exist_ok=True)
-    #         # joblib.dump(preprocessor_obj, self.config.preprocessor_obj_filepath)
-
-    #         # Build preprocessor using ColumnTransformer inside a Pipeline
-    #         # X_train_transformed = preprocessor_obj.fit_transform(X_train)
-    #         # X_test_transformed = preprocessor_obj.transform(X_test)
-
-    #         # Save preprocessor
-    #         os.makedirs(os.path.dirname(self.config.transformed_preprocessor_obj_filepath), exist_ok=True)
-    #         joblib.dump(preprocessor_obj, self.config.transformed_preprocessor_obj_filepath)
-
-    #         # Save transformed arrays
-    #         os.makedirs(os.path.dirname(self.config.transformed_train_arr_filepath), exist_ok=True)
-    #         np.save(self.config.transformed_train_arr_filepath, train_arr)
-    #         os.makedirs(os.path.dirname(self.config.transformed_test_arr_filepath), exist_ok=True)
-    #         np.save(self.config.transformed_test_arr_filepath, test_arr)
-
-
-    #         # Return artifact with file paths
-    #         artifact = DataTransformationArtifact(
-    #             transformed_train_arr_filepath=self.config.transformed_train_arr_filepath,
-    #             transformed_test_arr_filepath=self.config.transformed_test_arr_filepath,
-    #             transformed_preprocessor_obj_filepath=self.config.transformed_preprocessor_obj_filepath
-    #         )
-    #         return artifact
-
-    #     except Exception as e:
-    #         raise CustomException(e,sys)
-
 
     def initiate_data_transformation(self):
         logging.info('🚀 Initiating Data Transformation Step...\n')
@@ -281,23 +185,3 @@ class DataTransformation:
 
         except Exception as e:
             raise CustomException(e, sys)
-
-        
-# if __name__ == "__main__":
-#     # Step 1: Ingest the data
-#     ingestion_config = DataIngestionConfig()
-#     ingestion = DataIngestion(ingestion_config)
-#     ingestion_artifact = ingestion.initiate_data_ingestion()
-#     logging.info(f"Data Ingestion Artifact: {ingestion_artifact}")
-
-#     # Step 2: Validate the data using the artifact from ingestion
-#     validation_config = DataValidationConfig()
-#     validation = DataValidation(config=validation_config, data_ingestion_artifact=ingestion_artifact)
-#     validation_artifact = validation.initiate_data_validation()
-#     logging.info(f"Data Validation Artifact: {validation_artifact}")
-
-#     # Step 3: Transform the data using the artifact from Data VALIDATION
-#     transformation_config = DataTransformationConfig()
-#     transformation = DataTransformation(config=transformation_config, data_valid_artifact=validation_artifact)
-#     transformation_artifact = transformation.initiate_data_transformation()
-#     logging.info(f"Data Transformation Artifact: {transformation_artifact}")

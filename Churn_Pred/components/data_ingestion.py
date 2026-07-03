@@ -107,9 +107,6 @@ class DataIngestion:
             )
             return artifact
             logging.info('Data ingestion step completed successfully. \n')
-
         except Exception as e:
             logging.error(f"Error during data ingestion: {str(e)}")
             raise CustomException(e, sys)
-
-

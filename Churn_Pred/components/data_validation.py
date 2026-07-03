@@ -194,19 +194,3 @@ class DataValidation:
             )
         except Exception as e:
             raise CustomException(e,sys)
-
-
-# if __name__ == "__main__":
-#     # Step 1: Ingest the data
-#     ingestion_config = DataIngestionConfig()
-#     ingestion = DataIngestion(ingestion_config)
-#     ingestion_artifact = ingestion.initiate_data_ingestion()
-#     logging.info(f"Data Ingestion Artifact: {ingestion_artifact}")
-
-#     # Step 2: Validate the data using the artifact from ingestion
-#     validation_config = DataValidationConfig()
-#     validation = DataValidation(config=validation_config, data_ingestion_artifact=ingestion_artifact)
-#     validation_artifact = validation.initiate_data_validation()
-#     logging.info(f"Data Validation Artifact: {validation_artifact}")
-
-
