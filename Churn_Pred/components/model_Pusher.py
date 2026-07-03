@@ -11,9 +11,9 @@ from pathlib import Path
 from dataclasses import dataclass
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import (
-    confusion_matrix, roc_curve, auc, accuracy_score, classification_report
+    confusion_matrix, roc_curve, auc, accuracy_score, classification_report, f1_score
 )
-from sklearn.model_selection import cross_val_score, GridSearchCV
+from sklearn.model_selection import cross_val_score, GridSearchCV, RandomizedSearchCV
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
@@ -28,6 +28,8 @@ from Churn_Pred.entity.artifact_entity import DataTransformationArtifact,DataIng
 from Churn_Pred.utils import get_lift_status, get_overfit_warning
 from imblearn.pipeline import Pipeline as ImbPipeline
 from imblearn.combine import SMOTETomek
+from imblearn.over_sampling import SMOTE
+from imblearn.under_sampling import TomekLinks
 from collections import Counter
 
 import mlflow
@@ -116,10 +118,38 @@ class ModelTrainer:
                     y_test_pred = pipeline.predict(X_test)
 
                     # Add predicted probabilities for the current model
-                    prob_df[f"{model_name}_base_prob"] = pipeline.predict_proba(X_test)[:, 1]
+                    y_proba = pipeline.predict_proba(X_test)[:, 1]
+                    prob_df[f"{model_name}_base_prob"] = y_proba
+
+                    thresholds = np.arange(0.10, 0.91, 0.01)
+
+                    f1_scores = [
+                        f1_score(y_test, (y_proba >= t).astype(int))
+                        for t in thresholds
+                    ]
+
+                    optimal_threshold = thresholds[np.argmax(f1_scores)]
+                    optimal_f1 = np.max(f1_scores)
+
+                    y_test_pred_optimal = (y_proba >= optimal_threshold).astype(int)
+
+                    logging.info(
+                        f"{model_name}: Optimal Threshold={optimal_threshold:.2f}, "
+                        f"Optimal F1={optimal_f1:.4f}"
+                    )
 
                     train_acc = accuracy_score(y_train, y_train_pred)
                     test_acc = accuracy_score(y_test, y_test_pred)
+
+                    class_report_opt = classification_report(
+                        y_test,
+                        y_test_pred_optimal,
+                        output_dict=True
+                    )
+
+                    f1_opt = class_report_opt["1"]["f1-score"]
+                    precision_opt = class_report_opt["1"]["precision"]
+                    recall_opt = class_report_opt["1"]["recall"]
 
                     class_report = classification_report(y_test, y_test_pred, output_dict=True)
                     f1 = class_report['1'].get('f1-score', 0)
@@ -151,12 +181,16 @@ class ModelTrainer:
                     mlflow.log_metric("Lift Score", lift_score)
                     mlflow.log_param("Lift Status", lift_status)  
                     mlflow.log_param("Overfit/Underfit Warning",overfit_warning)
+                    mlflow.log_metric("Optimized F1", f1_opt)
+                    mlflow.log_metric("Optimized Precision", precision_opt)
+                    mlflow.log_metric("Optimized Recall", recall_opt)
 
                     signature = infer_signature(X_test, y_test_pred)
 
                     mlflow.sklearn.log_model(
                         sk_model=pipeline,           # Your model
-                        artifact_path="models",      # Log model under the "models" directory
+                        name="models",      # Log model under the "models" directory
+                        serialization_format="pickle",  # Use Pickle format
                         input_example=X_test.iloc[:5],  # Example input for signature
                         signature=signature          # Model signature
                     )
@@ -278,8 +312,15 @@ class ModelTrainer:
                 "XGBoost": {
                     "model": XGBClassifier(eval_metric='logloss'),
                     "params": {
-                        "n_estimators": [50, 100],
-                        "max_depth": [3, 6]
+                        "n_estimators":[100,200,300],
+                        "max_depth":[3,4,5,6],
+                        "learning_rate":[0.01,0.05],
+                        "subsample":[0.8,1.0],
+                        "colsample_bytree":[0.7,0.8],
+                        "gamma":[0,0.1,0.3],
+                        "min_child_weight":[1,3],
+                        "reg_alpha":[0,0.1],
+                        "reg_lambda":[1,2]
                     }
                 }
             }
@@ -304,9 +345,10 @@ class ModelTrainer:
                     # Add correct param grid key names
                     param_grid = {f"classifier__{key}": value for key, value in config["params"].items()}
 
-                    grid = GridSearchCV(
+                    grid = RandomizedSearchCV(
                         estimator=pipeline,
-                        param_grid=param_grid,
+                        # param_grid=param_grid,
+                        param_distributions=param_grid,
                         cv=5,
                         scoring='f1',
                         n_jobs=-1
@@ -315,11 +357,33 @@ class ModelTrainer:
                     grid.fit(X_train, y_train)
                     best_pipeline = grid.best_estimator_
 
-
                     y_train_pred = best_pipeline.predict(X_train)
                     y_test_pred = best_pipeline.predict(X_test)
 
-                    prob_df[f"{model_name}_tuned_prob"] = best_pipeline.predict_proba(X_test)[:, 1]
+                    # Predicted probabilities
+                    y_proba = best_pipeline.predict_proba(X_test)[:, 1]
+                    prob_df[f"{model_name}_tuned_prob"] = y_proba
+
+                    # ==============================
+                    # Find optimal classification threshold
+                    # ==============================
+                    thresholds = np.arange(0.10, 0.91, 0.01)
+
+                    f1_scores = [
+                        f1_score(y_test, (y_proba >= t).astype(int))
+                        for t in thresholds
+                    ]
+
+                    optimal_threshold = thresholds[np.argmax(f1_scores)]
+                    optimal_f1 = np.max(f1_scores)
+
+                    # Predictions using optimal threshold
+                    y_test_pred_optimal = (y_proba >= optimal_threshold).astype(int)
+
+                    logging.info(
+                        f"{model_name}: Optimal Threshold={optimal_threshold:.2f}, "
+                        f"Optimal F1={optimal_f1:.4f}"
+                    )
 
                     train_acc = accuracy_score(y_train, y_train_pred)
                     test_acc = accuracy_score(y_test, y_test_pred)
@@ -355,14 +419,17 @@ class ModelTrainer:
                     mlflow.log_metric("CV F1 Std", cv_scores.std())
                     mlflow.log_param("Lift Status", lift_status)
                     mlflow.log_param("Overfit/Underfit Warning", overfit_warning)
+                    mlflow.log_param("Optimal Threshold", float(optimal_threshold))
+                    mlflow.log_metric("Optimal Threshold F1", float(optimal_f1))
 
                     signature = infer_signature(X_test, y_test_pred)
 
                     mlflow.sklearn.log_model(
-                        sk_model=best_pipeline,      # Your BEST model
-                        artifact_path="models",      # Log model under the "models" directory
-                        input_example=X_test.iloc[:5],  # Example input for signature
-                        signature=signature          # Model signature
+                        sk_model=best_pipeline,        # Your BEST model
+                        name="models",                 # Log model under the "models" directory
+                        serialization_format="pickle",  # Use Pickle format
+                        input_example=X_test.iloc[:5], # Example input for signature
+                        signature=signature,           # Model signature
                     )
 
                     report.append({
@@ -684,12 +751,20 @@ class ModelTrainer:
             X_sample = X_test.sample(min(200, len(X_test)), random_state=42)
             explainer = shap.TreeExplainer(model)
             shap_values = explainer.shap_values(X_sample)
+
+            # Normalize SHAP output
+            if isinstance(shap_values, list):
+                plot_values = shap_values[1]
+            elif shap_values.ndim == 3:
+                plot_values = shap_values[:, :, 1]
+            else:
+                plot_values = shap_values
             
             if isinstance(shap_values, list):
-                np.save(save_dir / f"{model_name}_shap_values.npy", shap_values[1])
+                np.save(save_dir / f"{model_name}_shap_values.npy", plot_values)
                 # shap_values = shap_values[1]
             else:
-                np.save(save_dir / f"{model_name}_shap_values.npy", shap_values)
+                np.save(save_dir / f"{model_name}_shap_values.npy", plot_values)
 
             expected_value = explainer.expected_value
             if isinstance(expected_value, (list, np.ndarray)):
@@ -703,13 +778,7 @@ class ModelTrainer:
             ####################################################
             # Save SHAP Feature Importance CSV
             ####################################################
-
-            if isinstance(shap_values, list):
-                values = shap_values[1]
-            else:
-                values = shap_values
-
-            importance = np.abs(values).mean(axis=0)
+            importance = np.abs(plot_values).mean(axis=0)
 
             feature_importance = pd.DataFrame({
                 "Feature": X_sample.columns,
@@ -722,7 +791,7 @@ class ModelTrainer:
             # Summary Plot
             ############################
             plt.figure(figsize=(12,8))
-            shap.summary_plot(shap_values, X_sample, show=False)
+            shap.summary_plot(plot_values, X_sample, show=False)
             plt.tight_layout()
             plt.savefig(save_dir / f"{model_name}_SHAP_summary.png",dpi=300, bbox_inches="tight")
             plt.close()
@@ -731,7 +800,7 @@ class ModelTrainer:
             # Bar Plot
             ############################
             plt.figure(figsize=(10,7))
-            shap.summary_plot(shap_values, X_sample, plot_type="bar", show=False)
+            shap.summary_plot(plot_values, X_sample, plot_type="bar", show=False)
             plt.tight_layout()
             plt.savefig(save_dir / f"{model_name}_SHAP_bar.png",dpi=300, bbox_inches="tight")
             plt.close()
@@ -740,9 +809,8 @@ class ModelTrainer:
             # Dependence Plot
             ####################################################
             top_feature = feature_importance.iloc[0]["Feature"]
-
             plt.figure(figsize=(10,7))
-            shap.dependence_plot(top_feature, values, X_sample, show=False)
+            shap.dependence_plot(top_feature, plot_values, X_sample, show=False)
             plt.tight_layout()
 
             plt.savefig(save_dir / f"{model_name}_SHAP_dependence_{top_feature}.png", dpi=300, bbox_inches="tight")
@@ -751,13 +819,20 @@ class ModelTrainer:
             ############################
             # Waterfall
             ############################
-            explanation = explainer(X_sample)
-            shap.plots.waterfall(explanation[0], show=False)
+            plt.figure(figsize=(10,7))
 
-            plt.savefig(save_dir / f"{model_name}_SHAP_waterfall.png", dpi=300, bbox_inches="tight")
+            if explanation.values.ndim == 3:
+                shap.plots.waterfall(explanation[0, :, 1], show=False)
+            else:
+                shap.plots.waterfall(explanation[0], show=False)
+
+            plt.savefig(
+                save_dir / f"{model_name}_SHAP_waterfall.png",
+                dpi=300,
+                bbox_inches="tight",
+            )
 
             plt.close()
             logging.info(f"Saved SHAP plots for {model_name}")
-
         except Exception as e:
             logging.warning(f"SHAP failed for {model_name}: {e}")

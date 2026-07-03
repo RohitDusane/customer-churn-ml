@@ -35,7 +35,7 @@ from datetime import datetime
 
 if __name__ == "__main__":
     try:
-        pipeline_start = time.now()
+        pipeline_start = time.perf_counter()
         logging.info("=" * 80)
         logging.info("STARTING READMISSION PREDICTION PIPELINE")
         logging.info("=" * 80)
@@ -64,8 +64,8 @@ if __name__ == "__main__":
         transformation_artifact = transformation.initiate_data_transformation()
         logging.info(f"Data Transformation Artifact:\n{transformation_artifact}")
 
-        logging.info(f"Training Dataset : {transformation_artifact.transformed_train_file_path}")
-        logging.info(f"Testing Dataset : {transformation_artifact.transformed_test_file_path}")
+        logging.info(f"Training Dataset : {transformation_artifact.transformed_train_df_filepath}")
+        logging.info(f"Testing Dataset : {transformation_artifact.transformed_test_df_filepath}")
         # ------------------------------------------------------------------
         # Step 4 : Model Training
         # ------------------------------------------------------------------
@@ -91,16 +91,16 @@ if __name__ == "__main__":
         ) = trainer.train_tuned_models()
         logging.info("Hyperparameter tuning completed.")
 
-        best_model = tuned_report.sort_values(by="ROC_AUC", ascending=False).iloc[0]
+        best_model = tuned_report.sort_values(by="ROC AUC", ascending=False).iloc[0]
         logging.info(
             f"Best tuned model: {best_model['Model']} "
-            f"(ROC-AUC={best_model['ROC_AUC']:.4f})")
+            f"(ROC-AUC={best_model['ROC AUC']:.4f})")
         
         best_model.to_frame().T.to_csv("artifacts/model_trained/metrics/best_model.csv", index=False)
 
         pipeline_metadata = {
             "best_model": best_model["Model"],
-            "roc_auc": float(best_model["ROC_AUC"]),
+            "roc_auc": float(best_model["ROC AUC"]),
             "execution_time": time.perf_counter() - pipeline_start,
             "timestamp": datetime.now().isoformat()
         }
@@ -129,7 +129,7 @@ if __name__ == "__main__":
         logging.info("🎉 READMISSION PREDICTION PIPELINE COMPLETED SUCCESSFULLY")
         logging.info("=" * 80)
         logging.info(f"🏆 Best Model : {best_model['Model']}")
-        logging.info(f"📈 ROC-AUC    : {best_model['ROC_AUC']:.4f}")
+        logging.info(f"📈 ROC-AUC    : {best_model['ROC AUC']:.4f}")
         logging.info("=" * 80)
 
         logging.info("Artifacts saved to:")

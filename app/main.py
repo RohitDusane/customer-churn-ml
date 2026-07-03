@@ -2,8 +2,11 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from app.api.routes import router  # ✅ Import your modular router
-from imblearn.combine import SMOTETomek
-from imblearn.pipeline import Pipeline as ImbPipelin
+from fastapi import FastAPI, HTTPException, Request, Form, Query
+from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse, JSONResponse
+from pydantic import BaseModel
+from typing import List
+from fastapi import UploadFile, File
 
 app = FastAPI(title="Churn Prediction App")
 
@@ -12,10 +15,6 @@ app.mount("/static", StaticFiles(directory="app/static/css"), name="static")
 
 # Include routes
 app.include_router(router)
-
-
-
-
 
 
 
