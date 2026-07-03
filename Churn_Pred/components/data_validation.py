@@ -22,8 +22,6 @@ class DataValidationConfig:
     drift_report_file_path: Path = Path('artifacts/validated/drift/report.yaml')
     status_file_path: Path = Path('artifacts/validated/drift/status.txt')
 
-
-
 # ------ Data Validation class ------
 class DataValidation:
     def __init__(self, 
@@ -87,37 +85,75 @@ class DataValidation:
             raise CustomException(e, sys)
     
     def detect_data_drift(self, base_df, current_df, threshold=0.05) -> bool:
+        """
+        Detects feature drift between train and test datasets using the
+        Kolmogorov-Smirnov test.
+
+        Only numeric features are evaluated.
+
+        Returns
+        -------
+        bool
+            True  -> No significant drift detected
+            False -> Drift detected in one or more features
+        """
         try:
             status = True
             report = {}
 
-            for col in base_df.columns:
-                d1 = base_df[col].dropna()
-                d2 = current_df[col].dropna()
+            # ---------------------------------------------------------
+            # Evaluate only numeric columns
+            # ---------------------------------------------------------
+            numeric_columns = base_df.select_dtypes(include=np.number).columns
+            logging.info(f"Running drift detection on {len(numeric_columns)} numeric features.")
 
-                ks_test_result = ks_2samp(d1, d2)
+            for col in numeric_columns:
+                d1 = base_df[col].dropna().to_numpy()
+                d2 = current_df[col].dropna().to_numpy()
 
-                if ks_test_result.pvalue >= threshold:
-                    # No drift detected for this column
-                    is_drift_found = False
-                else:
-                    # Drift detected
-                    is_drift_found = True
-                    status = False  # Overall drift status becomes False if any drift found
+                # Skip empty columns
+                if len(d1) == 0 or len(d2) == 0:
+                    logging.warning(f"Skipping {col}: empty column.")
+                    report[col] = {
+                        "pvalue": None,
+                        "drift_status": None,
+                        "remarks": "Skipped - Empty column"
+                    }
+                    continue
+
+                # Skip constant columns
+                if np.unique(d1).size <= 1 and np.unique(d2).size <= 1:
+                    logging.warning(f"Skipping {col}: constant values.")
+                    report[col] = {
+                        "pvalue": None,
+                        "drift_status": None,
+                        "remarks": "Skipped - Constant column"
+                    }
+                    continue
+
+                ks_result = ks_2samp(d1, d2)
+                drift_found = ks_result.pvalue < threshold
+
+                if drift_found:
+                    status = False
 
                 report[col] = {
-                    'pvalue': float(ks_test_result.pvalue),
-                    'drift_status': is_drift_found
+                    "pvalue": round(float(ks_result.pvalue), 6),
+                    "drift_status": drift_found,
+                    "remarks": "Drift Detected" if drift_found else "No Drift"
                 }
 
-            # Ensure directory exists before saving report
+            # ---------------------------------------------------------
+            # Save drift report
+            # ---------------------------------------------------------
             self.config.drift_report_file_path.parent.mkdir(parents=True, exist_ok=True)
             write_yaml_file(filepath=self.config.drift_report_file_path, content=report)
-            logging.info(f"Drift report saved at {self.config.drift_report_file_path}")
+            logging.info(f"Drift report saved to {self.config.drift_report_file_path}")
 
             return status
 
         except Exception as e:
+            logging.exception("Error during data drift detection.")
             raise CustomException(e, sys)
         
     def initiate_data_validation(self)->DataValidationArtifact:

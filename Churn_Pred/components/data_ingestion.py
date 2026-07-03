@@ -13,7 +13,8 @@ from dataclasses import dataclass
 # ----- Data Ingestion Configuration -------
 @dataclass
 class DataIngestionConfig:
-    raw_data_path: Path = Path('artifacts/rawdata.csv')
+    # raw_data_path: Path = Path('artifacts/rawdata.csv')
+    raw_data_path: Path = Path("Churn_Pred/data/Churn_Modelling.csv")
     train_data_path: Path = Path('artifacts/ingested/train.csv')
     test_data_path: Path = Path('artifacts/ingested/test.csv')
     test_size: float = 0.2
