@@ -53,7 +53,6 @@ if experiment is None:
 # Set the experiment
 mlflow.set_experiment(experiment_name)
 
-
 # ====== CONFIG CLASS ======
 @dataclass
 class ModelTrainerConfig:
@@ -69,7 +68,6 @@ class ModelTrainerConfig:
     lift_gain_csv_path: Path = Path('artifacts/model_trained/metrics/lift')
     expected_accuracy: float = 0.6
     overfit_underfit_threshold: float = 0.05
-
 
 # ====== MODEL TRAINER CLASS ======
 class ModelTrainer:
@@ -114,8 +112,6 @@ class ModelTrainer:
                     ])
                     pipeline.fit(X_train, y_train)
 
-                    
-
                     y_train_pred = pipeline.predict(X_train)
                     y_test_pred = pipeline.predict(X_test)
 
@@ -156,13 +152,14 @@ class ModelTrainer:
                     mlflow.log_param("Lift Status", lift_status)  
                     mlflow.log_param("Overfit/Underfit Warning",overfit_warning)
 
+                    signature = infer_signature(X_test, y_test_pred)
+
                     mlflow.sklearn.log_model(
                         sk_model=pipeline,           # Your model
                         artifact_path="models",      # Log model under the "models" directory
                         input_example=X_test.iloc[:5],  # Example input for signature
                         signature=signature          # Model signature
                     )
-
                     report.append({
                         "Model": model_name,
                         "Train Accuracy": train_acc,
@@ -362,7 +359,7 @@ class ModelTrainer:
                     signature = infer_signature(X_test, y_test_pred)
 
                     mlflow.sklearn.log_model(
-                        sk_model=best_pipeline,           # Your BEST model
+                        sk_model=best_pipeline,      # Your BEST model
                         artifact_path="models",      # Log model under the "models" directory
                         input_example=X_test.iloc[:5],  # Example input for signature
                         signature=signature          # Model signature

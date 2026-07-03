@@ -24,15 +24,18 @@ from Churn_Pred.logger.log import logging
 from Churn_Pred.components.data_ingestion import DataIngestionConfig, DataIngestion
 from Churn_Pred.components.data_validation import DataValidationConfig, DataValidation
 from Churn_Pred.components.data_transformation import DataTransformationConfig, DataTransformation
+from Churn_Pred.components.model_Pusher import ModelTrainer,ModelTrainerArtifact, ModelTrainerConfig
 from Churn_Pred.entity.artifact_entity import DataTransformationArtifact,DataIngestionArtifact,DataValidationArtifact,ModelTrainerArtifact
 from Churn_Pred.utils import get_lift_status, get_overfit_warning
 from imblearn.pipeline import Pipeline as ImbPipeline
 from imblearn.combine import SMOTETomek
 from collections import Counter
-
+import time
+from datetime import datetime
 
 if __name__ == "__main__":
     try:
+        pipeline_start = time.now()
         logging.info("=" * 80)
         logging.info("STARTING READMISSION PREDICTION PIPELINE")
         logging.info("=" * 80)

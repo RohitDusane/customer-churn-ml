@@ -58,7 +58,6 @@ class DataTransformation:
             raise ValueError(f"Missing columns: {missing}")
         return True
 
-
     def get_data_transformer_object(self, df:pd.DataFrame):
         """
         Creates and returns a ColumnTransformer object for preprocessing.
@@ -93,6 +92,7 @@ class DataTransformation:
             return preprocessor
         except Exception as e:
             raise CustomException(e,sys)
+
 
     def initiate_data_transformation(self):
         logging.info('🚀 Initiating Data Transformation Step...\n')
@@ -153,7 +153,6 @@ class DataTransformation:
             logging.info(f"Train DataFrame saved completed")
             logging.info(f"Test DataFrame saved completed")
 
-
             # Also save numpy arrays for modeling
             train_arr = np.c_[X_train_transformed, y_train.to_numpy()]
             test_arr = np.c_[X_test_transformed, y_test.to_numpy()]
@@ -179,9 +178,7 @@ class DataTransformation:
             logging.info(f"Test array saved completed")
             logging.info(f"Preprocessor object saved completed")
 
-
             logging.info("Data Transformation Completed Successfully.")
             return artifact
-
         except Exception as e:
             raise CustomException(e, sys)

@@ -7,6 +7,7 @@ from Churn_Pred.entity.artifact_entity import DataIngestionArtifact,DataValidati
 from Churn_Pred.components.data_ingestion import DataIngestionConfig, DataIngestion
 
 import pandas as pd
+import numpy as np
 from scipy.stats import ks_2samp
 from dataclasses import dataclass
 
