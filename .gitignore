@@ -26,8 +26,8 @@ __pycache__/
 .vscode/
 .idea/
 index.html
-my_entire_pipeline.py
-project_documentation.md
+my_entire_pipeline.py/
+project_documentation.md/
 # Python
 __pycache__/
 *.pyc
