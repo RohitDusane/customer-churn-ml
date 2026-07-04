@@ -8,6 +8,8 @@ Fixes applied:
      from the JS frontend (no page reload required).
   3. /health returns model load status so monitoring can detect failures.
 """
+print("LOADED ROUTES:", __file__)
+
 from fastapi import APIRouter, Request, Form, UploadFile, File, Query, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
@@ -21,30 +23,41 @@ from app.core.config import model, preprocessor
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
 
+print("Template path:", os.path.abspath("app/templates"))
+print("Exists:", os.path.exists("app/templates"))
+print("Contents:", os.listdir("app/templates"))
 
 # ── Pages ────────────────────────────────────────────────────────────────────
 
-@router.get("/", response_class=HTMLResponse)
-async def home(request: Request, message: str = None):
-    return templates.TemplateResponse("home.html", {
-        "request": request,
-        "message": message
-    })
+@router.get("/")
+async def home(request: Request):
+    return templates.TemplateResponse(
+        request=request,
+        name="home.html",
+        context={"request": request}
+    )
 
-
-@router.get("/predict", response_class=HTMLResponse)
+@router.get("/predict")
 async def predict_get(request: Request):
-    return templates.TemplateResponse("predict.html", {
-        "request": request,
-        "result": None,
-        "form_data": {}
-    })
+    return templates.TemplateResponse(
+        request=request,
+        name="predict.html",
+        context={
+            "request": request,
+            "result": None,
+        },
+    )
 
 
 @router.get("/about", response_class=HTMLResponse)
 async def about(request: Request):
-    return templates.TemplateResponse("about.html", {"request": request})
-
+    return templates.TemplateResponse(
+        request=request,
+        name="about.html",
+        context={
+            "request": request,
+        },
+    )
 
 # ── Health ────────────────────────────────────────────────────────────────────
 
@@ -101,11 +114,15 @@ async def predict_form(
     except Exception as exc:
         result = {"error": str(exc)}
 
-    return templates.TemplateResponse("predict.html", {
-        "request": request,
-        "result": result,
-        "form_data": form_data,
-    })
+    return templates.TemplateResponse(
+        request=request,
+        name="predict.html",
+        context={
+            "request": request,
+            "result": result,
+            "form_data": form_data,
+        },
+    )
 
 
 # ── Single prediction (JSON API — called by JS fetch, no page reload) ────────

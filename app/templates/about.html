@@ -1,4 +1,283 @@
 {% extends "base.html" %}
+{% block title %}About — ChurnIQ{% endblock %}
+
+{% block extra_style %}
+.pipeline-flow{display:flex;align-items:stretch;gap:0;overflow-x:auto;padding:10px 0 20px;margin:32px 0}
+.pipeline-step{
+  flex:1 0 140px;display:flex;flex-direction:column;align-items:center;
+  text-align:center;padding:0 8px;
+}
+.pipeline-icon{
+  width:56px;height:56px;border-radius:16px;
+  display:flex;align-items:center;justify-content:center;font-size:1.4rem;
+  margin-bottom:12px;border:1px solid;transition:var(--transition);
+}
+.pipeline-step:hover .pipeline-icon{transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,0,0,.3)}
+.pipeline-title{font-size:.9rem;font-weight:700;color:#fff;margin-bottom:6px}
+.pipeline-sub{font-size:.75rem;line-height:1.5;color:var(--text-muted)}
+.pipeline-arrow{
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;color:var(--text-disabled);font-size:1.2rem;padding-top:20px;
+}
+
+.metric-card-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:32px 0}
+.metric-card{
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+  border-radius:16px;padding:20px;text-align:center;
+  transition:var(--transition);
+}
+.metric-card:hover{border-color:var(--border-hover);transform:translateY(-4px)}
+.metric-card .val{font-size:2rem;font-weight:800;line-height:1;margin-bottom:6px}
+.metric-card .lbl{font-size:.75rem;color:var(--text-muted);font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+
+.stack-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
+.stack-item{
+  display:flex;align-items:center;gap:12px;
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+  border-radius:12px;padding:14px 16px;transition:var(--transition);
+}
+.stack-item:hover{border-color:var(--border-hover);background:rgba(59,130,246,.06)}
+.stack-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.stack-name{font-size:.9rem;font-weight:600;color:#fff}
+.stack-desc{font-size:.78rem;color:var(--text-muted);margin-top:2px}
+
+.faq-item{
+  border-bottom:1px solid var(--border);padding:18px 0;cursor:pointer;
+}
+.faq-q{display:flex;justify-content:space-between;align-items:center;font-weight:600;color:#fff}
+.faq-q svg{transition:transform .3s;flex-shrink:0}
+.faq-a{font-size:.9rem;line-height:1.8;color:var(--text-muted);max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s}
+.faq-item.open .faq-a{max-height:200px;padding-top:12px}
+.faq-item.open .faq-q svg{transform:rotate(180deg)}
+
+@media(max-width:800px){
+  .metric-card-grid{grid-template-columns:1fr 1fr}
+  .stack-grid{grid-template-columns:1fr 1fr}
+  .pipeline-flow{gap:0}
+}
+@media(max-width:500px){
+  .metric-card-grid{grid-template-columns:1fr}
+  .stack-grid{grid-template-columns:1fr}
+}
+{% endblock %}
+
+{% block content %}
+
+<!-- Hero -->
+<div class="section-heading" style="margin-bottom:48px">
+  <span class="eyebrow"><span class="dot"></span>About ChurnIQ</span>
+  <h2>How the system works</h2>
+  <p>
+    ChurnIQ is an end-to-end machine learning system that predicts customer churn probability
+    using XGBoost trained on the Telco Customer Churn dataset — with business-cost-aware
+    threshold optimization and full MLOps deployment.
+  </p>
+</div>
+
+<!-- ML Pipeline -->
+<div class="card" style="margin-bottom:32px">
+  <div style="font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px">Machine Learning Pipeline</div>
+  <div class="pipeline-flow">
+
+    <div class="pipeline-step">
+      <div class="pipeline-icon" style="background:rgba(59,130,246,.1);border-color:rgba(59,130,246,.25);color:#3B82F6">📥</div>
+      <div class="pipeline-title">Data Ingestion</div>
+      <div class="pipeline-sub">Load CSV, train/test split, schema validation</div>
+    </div>
+    <div class="pipeline-arrow">→</div>
+
+    <div class="pipeline-step">
+      <div class="pipeline-icon" style="background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.25);color:#F59E0B">🔍</div>
+      <div class="pipeline-title">Validation</div>
+      <div class="pipeline-sub">Missing values, type checks, schema compliance</div>
+    </div>
+    <div class="pipeline-arrow">→</div>
+
+    <div class="pipeline-step">
+      <div class="pipeline-icon" style="background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.25);color:#22D3EE">🔄</div>
+      <div class="pipeline-title">Transformation</div>
+      <div class="pipeline-sub">Scaling, encoding, SMOTETomek for class balance</div>
+    </div>
+    <div class="pipeline-arrow">→</div>
+
+    <div class="pipeline-step">
+      <div class="pipeline-icon" style="background:rgba(139,92,246,.1);border-color:rgba(139,92,246,.25);color:#8B5CF6">🤖</div>
+      <div class="pipeline-title">Model Training</div>
+      <div class="pipeline-sub">XGBoost, Random Forest, Logistic Regression via MLflow</div>
+    </div>
+    <div class="pipeline-arrow">→</div>
+
+    <div class="pipeline-step">
+      <div class="pipeline-icon" style="background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.25);color:#EF4444">⚙️</div>
+      <div class="pipeline-title">Threshold Tuning</div>
+      <div class="pipeline-sub">Business cost-aware threshold: FN costs 5× FP</div>
+    </div>
+    <div class="pipeline-arrow">→</div>
+
+    <div class="pipeline-step">
+      <div class="pipeline-icon" style="background:rgba(16,185,129,.1);border-color:rgba(16,185,129,.25);color:#10B981">🚀</div>
+      <div class="pipeline-title">Deployment</div>
+      <div class="pipeline-sub">FastAPI + Docker, real-time & batch inference</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Model metrics -->
+<div class="card" style="margin-bottom:32px">
+  <div style="font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px">Model Performance — XGBoost (Best Model)</div>
+  <div style="font-size:.85rem;color:var(--text-disabled);margin-bottom:4px">Telco Customer Churn Dataset · 10,000 records</div>
+  <div class="metric-card-grid">
+    <div class="metric-card">
+      <div class="val" style="color:#3B82F6">0.859</div>
+      <div class="lbl">ROC AUC</div>
+    </div>
+    <div class="metric-card">
+      <div class="val" style="color:#10B981">0.71+</div>
+      <div class="lbl">F1 (optimal threshold)</div>
+    </div>
+    <div class="metric-card">
+      <div class="val" style="color:#F59E0B">85%</div>
+      <div class="lbl">Test Accuracy</div>
+    </div>
+    <div class="metric-card">
+      <div class="val" style="color:#22D3EE">0.30</div>
+      <div class="lbl">Decision Threshold</div>
+    </div>
+  </div>
+  <div style="padding:16px;border-radius:12px;background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15);font-size:.88rem;line-height:1.7;color:var(--text-muted)">
+    <strong style="color:#93c5fd">Why threshold = 0.30 (not 0.50)?</strong><br>
+    In churn prevention, missing a churner (false negative) costs roughly 5× more than incorrectly
+    flagging a loyal customer (false positive). Using a lower threshold means we catch more true churners
+    at the cost of some false alarms — the right trade-off for a retention team with capacity to act.
+    The threshold was optimized by maximizing F1 over a search grid from 0.10 to 0.90.
+  </div>
+</div>
+
+<!-- How to use -->
+<div class="card" style="margin-bottom:32px">
+  <div style="font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:20px">How to Use</div>
+  <div class="grid-2">
+    <div style="display:flex;gap:16px">
+      <div style="width:40px;height:40px;border-radius:12px;background:rgba(59,130,246,.15);color:#3B82F6;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0">👤</div>
+      <div>
+        <div style="font-weight:700;color:#fff;margin-bottom:6px">Single Customer Prediction</div>
+        <div style="font-size:.88rem;color:var(--text-muted);line-height:1.7">Go to the <a href="/predict" style="color:var(--blue)">Predict</a> page, enter customer details using the sliders and dropdowns, and click <strong style="color:#fff">Run Prediction</strong>. The result appears instantly with risk tier and probability gauge — no page reload.</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:16px">
+      <div style="width:40px;height:40px;border-radius:12px;background:rgba(34,211,238,.12);color:#22D3EE;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0">📁</div>
+      <div>
+        <div style="font-weight:700;color:#fff;margin-bottom:6px">Batch CSV Prediction</div>
+        <div style="font-size:.88rem;color:var(--text-muted);line-height:1.7">Switch to the <strong style="color:#fff">Batch CSV</strong> tab, upload a CSV with the required columns, and download a results file with churn probability and risk tier appended to every row.</div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:18px;padding:14px 16px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:10px;font-size:.85rem;color:#FDE68A">
+    📋 <strong>CSV required columns:</strong>
+    <code style="font-size:.8rem">creditscore, geography, gender, age, tenure, balance, numofproducts, hascrcard, isactivemember, estimatedsalary</code>
+    — column names are case-insensitive. Download a <a href="/static/sample_customers.csv" style="color:var(--amber)">sample template CSV</a>.
+  </div>
+</div>
+
+<!-- Tech stack -->
+<div class="card" style="margin-bottom:32px">
+  <div style="font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px">Tech Stack</div>
+  <div class="stack-grid">
+    <div class="stack-item"><span class="stack-dot" style="background:#1f6f43"></span><div><div class="stack-name">XGBoost</div><div class="stack-desc">Gradient boosting classifier</div></div></div>
+    <div class="stack-item"><span class="stack-dot" style="background:#f7931e"></span><div><div class="stack-name">scikit-learn</div><div class="stack-desc">Preprocessing & evaluation</div></div></div>
+    <div class="stack-item"><span class="stack-dot" style="background:#3ecf8e"></span><div><div class="stack-name">imbalanced-learn</div><div class="stack-desc">SMOTETomek class balancing</div></div></div>
+    <div class="stack-item"><span class="stack-dot" style="background:#0194E2"></span><div><div class="stack-name">MLflow</div><div class="stack-desc">Experiment tracking & registry</div></div></div>
+    <div class="stack-item"><span class="stack-dot" style="background:#10b981"></span><div><div class="stack-name">FastAPI</div><div class="stack-desc">REST API + Jinja2 templates</div></div></div>
+    <div class="stack-item"><span class="stack-dot" style="background:#2496ED"></span><div><div class="stack-name">Docker</div><div class="stack-desc">Containerized deployment</div></div></div>
+  </div>
+</div>
+
+<!-- Model Card -->
+<div class="card" style="margin-bottom:32px">
+  <div style="font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:18px">📋 Model Card</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+    <div>
+      <div style="font-size:.82rem;font-weight:700;color:var(--text-dim);margin-bottom:8px">INTENDED USE</div>
+      <div style="font-size:.88rem;color:var(--text-muted);line-height:1.7">Customer retention decision support for telecom businesses. Identifies customers at risk of churning to prioritize retention outreach.</div>
+    </div>
+    <div>
+      <div style="font-size:.82rem;font-weight:700;color:var(--text-dim);margin-bottom:8px">NOT FOR</div>
+      <div style="font-size:.88rem;color:var(--text-muted);line-height:1.7">Automated customer rejection, credit decisions, or any application without human oversight of individual cases.</div>
+    </div>
+    <div>
+      <div style="font-size:.82rem;font-weight:700;color:var(--text-dim);margin-bottom:8px">TRAINING DATA</div>
+      <div style="font-size:.88rem;color:var(--text-muted);line-height:1.7">Telco Customer Churn Dataset (Kaggle/IBM) — 10,000 records, ~26% churn rate. European telecom market.</div>
+    </div>
+    <div>
+      <div style="font-size:.82rem;font-weight:700;color:var(--text-dim);margin-bottom:8px">KNOWN LIMITATIONS</div>
+      <div style="font-size:.88rem;color:var(--text-muted);line-height:1.7">Trained on European telecom data. Performance may vary for GCC/UAE market. Not validated on UAE operator customer profiles.</div>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div class="card">
+  <div style="font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px">FAQ</div>
+  <div id="faq">
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">Why is the threshold 0.30 and not 0.50?
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-a">A 0.50 threshold treats false positives and false negatives equally. In churn prevention, missing a churner costs ~5× more than flagging a loyal customer incorrectly. We tune the threshold to reflect this real-world business cost, optimizing F1 over a grid search.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">What is SMOTETomek and why does it matter?
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-a">The Telco dataset has ~26% churn — a class imbalance. SMOTETomek combines synthetic oversampling of the minority class (SMOTE) with Tomek links removal to clean noisy borderline samples. This produces better class separation than oversampling alone.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">Can I use this for my own customer data?
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-a">Yes — for screening and decision support. Column names in your CSV must match the required format (case-insensitive). Geography should be encoded as France=0, Germany=1, Spain=2. For production use on a different market, retraining on your own data is recommended.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">What does the batch CSV output look like?
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-a">Your original columns are returned unchanged, with two new columns appended: churn_probability (0.0–1.0 float) and prediction (0 = will stay, 1 = predicted to churn at the 0.30 threshold).</div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_script %}
+<script>
+function toggleFaq(el){
+  el.classList.toggle('open');
+}
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 
+
+
+{% extends "base.html" %}
 {% block title %}About - Churn App{% endblock %}
 
 {% block content %}
@@ -29,4 +308,4 @@
     ✅ Whether you're evaluating individual customers or analyzing bulk data, this app offers speed, transparency, and accuracy.
   </p>
 </div>
-{% endblock %}
+{% endblock %} -->

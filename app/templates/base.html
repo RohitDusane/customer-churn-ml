@@ -1,11 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>{% block title %}ChurnIQ — Customer Churn Prediction{% endblock %}</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050816">
+
+  <meta name="description"
+        content="AI Powered Customer Churn Prediction Dashboard">
+
+  <meta name="author"
+        content="Rohit Dusane">
+
+  <title>
+  {% block title %}
+  ChurnIQ — Customer Churn Prediction
+  {% endblock %}
+  </title>
+
+  <meta name="description"
+  content="{% block description %}
+  AI Customer Churn Prediction Platform
+  {% endblock %}">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet"/>
   <style>
+    
   /* ══════════════════════════════════════════════════
      DESIGN TOKENS
   ══════════════════════════════════════════════════ */
@@ -304,7 +323,7 @@
 <footer class="site-footer">
   ChurnIQ v2.0 — Built with FastAPI + XGBoost &nbsp;|&nbsp;
   <a href="/health">API Status</a> &nbsp;|&nbsp;
-  Made by <a href="https://github.com/RohitDusane" target="_blank">RohitDusane</a>
+  Made by <a href="https://github.com/RohitDusane" target="_blank">Rohit Dusane</a>
 </footer>
 
 <div class="toast" id="global-toast"></div>
