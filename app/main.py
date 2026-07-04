@@ -9,7 +9,7 @@ app = FastAPI(
 )
 
 # Static files (CSS)
-# app.mount("/static", StaticFiles(directory="app/static"), name="static")
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 # Include routes
 app.include_router(router)

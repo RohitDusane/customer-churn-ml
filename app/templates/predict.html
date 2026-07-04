@@ -1,123 +1,12 @@
 {% extends "base.html" %}
-{% block title %}Predict — ChurnIQ{% endblock %}
 
-{% block extra_style %}
-/* ── Page layout ── */
-.predict-grid{display:grid;grid-template-columns:480px 1fr;gap:28px;align-items:start}
-@media(max-width:1050px){.predict-grid{grid-template-columns:1fr}}
+{% block extra_css %}
+<link rel="stylesheet"
+      href="{{ url_for('static', path='css/predict.css') }}">
+{% endblock %}
 
-/* ── Left panel tabs ── */
-.tab-bar{display:flex;gap:6px;margin-bottom:22px;
-  background:rgba(255,255,255,.04);border:1px solid var(--border);
-  border-radius:12px;padding:5px;
-}
-.tab{
-  flex:1;padding:9px;border-radius:9px;font-size:.88rem;font-weight:600;
-  color:var(--text-muted);border:none;background:none;cursor:pointer;transition:.2s;
-}
-.tab.active{background:rgba(59,130,246,.2);color:var(--blue)}
-
-/* ── Single form ── */
-.form-section{display:none}
-.form-section.active{display:block}
-.form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media(max-width:600px){.form-grid-2{grid-template-columns:1fr}}
-
-.section-label{
-  font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--text-muted);border-bottom:1px solid var(--border);
-  padding-bottom:8px;margin-bottom:14px;margin-top:6px;
-}
-
-/* Toggle pill */
-.toggle-group{display:flex;gap:10px}
-.toggle-pill{
-  display:flex;border-radius:10px;overflow:hidden;
-  border:1px solid var(--border);background:rgba(255,255,255,.03);
-}
-.toggle-opt{
-  padding:10px 18px;font-size:.88rem;font-weight:600;
-  color:var(--text-muted);cursor:pointer;border:none;background:none;transition:.2s;
-}
-.toggle-opt.sel{background:rgba(59,130,246,.2);color:var(--blue)}
-
-/* Slider row */
-.slider-row{display:flex;align-items:center;gap:10px}
-.slider-val{
-  font-family:'JetBrains Mono',monospace;font-size:.82rem;font-weight:700;
-  color:var(--blue);min-width:80px;text-align:right;background:rgba(59,130,246,.1);
-  padding:4px 8px;border-radius:6px;border:1px solid rgba(59,130,246,.2);
-}
-
-/* ── Batch panel ── */
-.dropzone{
-  border:2px dashed var(--border);border-radius:16px;padding:40px 20px;
-  text-align:center;cursor:pointer;transition:.3s;
-}
-.dropzone:hover,.dropzone.over{border-color:var(--blue);background:rgba(59,130,246,.06)}
-.dropzone input{display:none}
-.dropzone-icon{font-size:2.5rem;margin-bottom:12px}
-.dropzone-title{font-size:1rem;font-weight:700;color:#fff;margin-bottom:6px}
-.dropzone-sub{font-size:.85rem;color:var(--text-muted)}
-.file-name{
-  display:none;margin-top:14px;padding:10px 14px;border-radius:10px;
-  background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);
-  color:var(--green);font-size:.88rem;font-weight:600;
-}
-
-/* ── Right panel ── */
-.result-panel{position:sticky;top:88px;display:flex;flex-direction:column;gap:20px}
-
-/* Gauge */
-.gauge-wrap{position:relative;display:flex;flex-direction:column;align-items:center;padding:24px 20px 14px}
-.gauge-number{
-  position:absolute;bottom:52px;left:50%;transform:translateX(-50%);
-  font-size:2.8rem;font-weight:800;line-height:1;text-align:center;
-  transition:color .4s;
-}
-.gauge-sub{
-  position:absolute;bottom:34px;left:50%;transform:translateX(-50%);
-  font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
-  color:var(--text-muted);white-space:nowrap;
-}
-
-/* Risk tier card */
-.risk-card{
-  border-radius:16px;padding:20px 22px;border:1px solid;
-  display:flex;align-items:center;gap:16px;
-  transition:var(--transition);
-}
-.risk-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
-.risk-title{font-size:1.05rem;font-weight:700;color:#fff}
-.risk-sub{font-size:.85rem;line-height:1.5;margin-top:3px}
-.risk-low{background:rgba(16,185,129,.1);border-color:rgba(16,185,129,.3)}
-.risk-medium{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.3)}
-.risk-high{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.3)}
-
-/* Feature importance mini bars */
-.feature-bar{display:flex;align-items:center;gap:10px;margin-bottom:9px}
-.feature-name{font-size:.8rem;color:var(--text-muted);min-width:110px;font-weight:500}
-.feature-track{flex:1;height:5px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden}
-.feature-fill{height:100%;background:var(--gradient);border-radius:3px;transition:width .6s ease}
-.feature-pct{font-size:.75rem;color:var(--text-muted);font-family:'JetBrains Mono',monospace;min-width:32px;text-align:right}
-
-/* Empty state */
-.empty-state{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:50px 20px;text-align:center;gap:14px;
-}
-.empty-icon{font-size:3rem;opacity:.35}
-.empty-title{font-size:1rem;font-weight:600;color:var(--text-muted)}
-.empty-sub{font-size:.85rem;color:var(--text-disabled)}
-
-/* Batch result table */
-.batch-result-row{padding:10px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.batch-result-row:last-child{border-bottom:none}
-
-/* Server-rendered result (fallback) */
-.sr-result{
-  border-radius:16px;padding:22px;border:1px solid;text-align:center;
-}
+{% block title %}
+Prediction
 {% endblock %}
 
 {% block content %}
@@ -283,7 +172,7 @@
           </a>
         </div>
 
-        <div id="batch-summary" style="display:none;margin-top:18px" class="card" style="padding:16px">
+        <div id="batch-summary" style="display:none;margin-top:18px;padding:16px" class="card">
           <div id="batch-summary-content"></div>
         </div>
 
@@ -328,7 +217,7 @@
       <!-- Gauge (hidden until first prediction) -->
       <div id="gauge-display" style="display:none">
         <div class="gauge-wrap">
-          <svg class="gauge-svg" width="220" height="130" viewBox="0 0 220 130">
+          <svg class="gauge-svg" width="320" height="190" viewBox="0 0 320 190">
             <defs>
               <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" stop-color="#10B981"/>
@@ -337,17 +226,17 @@
               </linearGradient>
             </defs>
             <!-- Track -->
-            <path d="M20 120 A90 90 0 0 1 200 120" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="16" stroke-linecap="round"/>
+            <path d="M30 170 A130 130 0 0 1 290 170" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="18" stroke-linecap="round"/>
             <!-- Fill -->
-            <path id="gauge-fill" d="M20 120 A90 90 0 0 1 200 120" fill="none"
-              stroke="url(#gaugeGrad)" stroke-width="16" stroke-linecap="round"
-              stroke-dasharray="283" stroke-dashoffset="283"
+            <path id="gauge-fill" d="M30 170 A130 130 0 0 1 290 170" fill="none"
+              stroke="url(#gaugeGrad)" stroke-width="18" stroke-linecap="round"
+              stroke-dasharray="408" stroke-dashoffset="408"
               style="transition:stroke-dashoffset .8s cubic-bezier(.4,0,.2,1)"/>
             <!-- Needle -->
-            <line id="gauge-needle" x1="110" y1="120" x2="110" y2="44"
+            <line id="gauge-needle" x1="160" y1="170" x2="160" y2="55"
               stroke="#fff" stroke-width="3" stroke-linecap="round"
-              style="transform-origin:110px 120px;transform:rotate(-90deg);transition:transform .8s cubic-bezier(.4,0,.2,1)"/>
-            <circle cx="110" cy="120" r="6" fill="#fff" opacity=".9"/>
+              style="transform-origin:160px 170px;transform:rotate(-90deg);transition:transform .8s cubic-bezier(.4,0,.2,1)"/>
+            <circle cx="160" cy="170" r="7" fill="#fff" opacity=".9"/>
           </svg>
           <div class="gauge-number" id="gauge-number">0%</div>
           <div class="gauge-sub">Churn Probability</div>
@@ -406,213 +295,12 @@
 
   </div>
 </div>
+
+
 {% endblock %}
 
 {% block extra_script %}
-<script>
-/* ── Tab switch ── */
-function switchTab(tab){
-  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active', (tab==='single'&&i===0)||(tab==='batch'&&i===1)));
-  document.getElementById('tab-single').classList.toggle('active', tab==='single');
-  document.getElementById('tab-batch').classList.toggle('active', tab==='batch');
-}
+<script src="{{ url_for('static', path='js/predict.js') }}"></script>
 
-/* ── Toggle pill ── */
-function setToggle(btn, hiddenId){
-  btn.closest('.toggle-pill').querySelectorAll('.toggle-opt').forEach(o=>o.classList.remove('sel'));
-  btn.classList.add('sel');
-  document.getElementById(hiddenId).value = btn.dataset.val;
-}
 
-/* ── Gauge update ── */
-function updateGauge(pct){
-  const fill = document.getElementById('gauge-fill');
-  const needle = document.getElementById('gauge-needle');
-  const num = document.getElementById('gauge-number');
-  const total = 283;
-  const offset = total - (total * pct / 100);
-  fill.style.strokeDashoffset = offset;
-  const deg = -90 + (pct / 100 * 180);
-  needle.style.transform = `rotate(${deg}deg)`;
-  num.textContent = Math.round(pct) + '%';
-  const color = pct >= 70 ? '#EF4444' : pct >= 40 ? '#F59E0B' : '#10B981';
-  num.style.color = color;
-}
-
-function showRiskCard(tier, prob){
-  const card = document.getElementById('risk-card');
-  const icon = document.getElementById('risk-icon');
-  const title = document.getElementById('risk-title');
-  const sub = document.getElementById('risk-sub');
-  card.style.display = 'flex';
-  card.className = `risk-card risk-${tier.toLowerCase()}`;
-
-  const cfg = {
-    High:   {ico:'🔴', label:'High Churn Risk', msg:'Immediate intervention recommended. Consider personal outreach and retention offer.', bg:'risk-high'},
-    Medium: {ico:'🟡', label:'Medium Churn Risk', msg:'Monitor closely. Consider proactive engagement within 2 weeks.', bg:'risk-medium'},
-    Low:    {ico:'🟢', label:'Low Churn Risk',    msg:'Customer appears stable. Standard retention program applies.', bg:'risk-low'},
-  };
-  const c = cfg[tier] || cfg.Low;
-  icon.textContent = c.ico;
-  title.textContent = c.label;
-  sub.textContent = c.msg;
-  sub.style.color = tier==='High' ? '#FCA5A5' : tier==='Medium' ? '#FDE68A' : '#6EE7B7';
-}
-
-function showInputSummary(data){
-  const geoMap = {0:'France', 1:'Germany', 2:'Spain'};
-  const rows = [
-    ['Geography',      geoMap[data.Geography]||data.Geography],
-    ['Gender',         data.Gender==1?'Male':'Female'],
-    ['Age',            data.Age + ' yrs'],
-    ['Credit Score',   data.CreditScore],
-    ['Balance',        '€' + Number(data.Balance).toLocaleString()],
-    ['Salary',         '€' + Number(data.EstimatedSalary).toLocaleString()],
-    ['Tenure',         data.Tenure + ' yrs'],
-    ['Products',       data.NumOfProducts],
-    ['Credit Card',    data.HasCrCard==1?'Yes':'No'],
-    ['Active Member',  data.IsActiveMember==1?'Yes':'No'],
-  ];
-  const html = rows.map(([k,v])=>`
-    <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:.85rem">
-      <span style="color:var(--text-muted)">${k}</span>
-      <span style="color:#fff;font-weight:600">${v}</span>
-    </div>`).join('');
-  document.getElementById('input-summary-content').innerHTML = html;
-  document.getElementById('input-summary-card').style.display = 'block';
-}
-
-/* ── Single prediction via JSON API ── */
-async function runSinglePredict(e){
-  e.preventDefault();
-  const btn = document.getElementById('predict-btn');
-  btn.innerHTML = '<span class="spinner"></span> Predicting…';
-  btn.disabled = true;
-
-  const form = document.getElementById('single-form');
-  const fd = new FormData(form);
-  const payload = {
-    CreditScore:     parseFloat(fd.get('CreditScore')),
-    Geography:       parseInt(fd.get('Geography')),
-    Gender:          parseInt(fd.get('Gender')),
-    Age:             parseFloat(fd.get('Age')),
-    Tenure:          parseInt(fd.get('Tenure')),
-    Balance:         parseFloat(fd.get('Balance')),
-    NumOfProducts:   parseInt(fd.get('NumOfProducts')),
-    HasCrCard:       parseInt(fd.get('HasCrCard')),
-    IsActiveMember:  parseInt(fd.get('IsActiveMember')),
-    EstimatedSalary: parseFloat(fd.get('EstimatedSalary')),
-  };
-
-  // Validate required selects
-  if(isNaN(payload.Geography)||isNaN(payload.Gender)){
-    showToast('Please select Geography and Gender.','error');
-    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Run Prediction';
-    btn.disabled = false;
-    return;
-  }
-
-  try{
-    const res = await fetch('/api/predict', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(payload),
-    });
-    const data = await res.json();
-
-    if(!res.ok) throw new Error(data.detail || 'Prediction failed');
-
-    // Show gauge
-    document.getElementById('empty-state').style.display = 'none';
-    document.getElementById('gauge-display').style.display = 'block';
-    setTimeout(()=>updateGauge(data.churn_probability), 100);
-    showRiskCard(data.risk_tier, data.churn_probability);
-    showInputSummary(payload);
-    showToast(`✅ Prediction complete — ${data.churn_probability}% churn probability`);
-
-  } catch(err){
-    showToast('❌ ' + err.message, 'error');
-  } finally{
-    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Run Prediction';
-    btn.disabled = false;
-  }
-}
-
-/* ── Batch prediction ── */
-let selectedBatchFile = null;
-
-function handleFileSelect(input){
-  if(input.files[0]) setFile(input.files[0]);
-}
-function handleDrop(e){
-  e.preventDefault();
-  document.getElementById('dropzone').classList.remove('over');
-  if(e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]);
-}
-function setFile(file){
-  selectedBatchFile = file;
-  const el = document.getElementById('file-name-display');
-  el.style.display = 'block';
-  el.textContent = '📄 ' + file.name + ' (' + (file.size/1024).toFixed(1) + ' KB)';
-  document.getElementById('batch-btn').disabled = false;
-}
-
-async function runBatchPredict(){
-  if(!selectedBatchFile){ showToast('No file selected','error'); return; }
-  const btn = document.getElementById('batch-btn');
-  btn.innerHTML = '<span class="spinner"></span> Processing…';
-  btn.disabled = true;
-
-  const fd = new FormData();
-  fd.append('file', selectedBatchFile);
-
-  try{
-    const res = await fetch('/predict_batch', {method:'POST', body:fd});
-    const data = await res.json();
-    if(!res.ok) throw new Error(data.detail||'Batch failed');
-
-    const dl = document.getElementById('batch-download');
-    dl.href = data.download_url;
-    dl.style.display = 'inline-flex';
-
-    const summary = document.getElementById('batch-summary');
-    document.getElementById('batch-summary-content').innerHTML = `
-      <div style="display:flex;gap:20px;flex-wrap:wrap">
-        <div class="metric-box" style="flex:1;min-width:120px;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:14px;text-align:center">
-          <div style="font-size:1.6rem;font-weight:800;color:#10B981">${data.num_predictions}</div>
-          <div style="font-size:.75rem;color:var(--text-muted);margin-top:3px">Records processed</div>
-        </div>
-        <div style="flex:2;min-width:200px;display:flex;align-items:center;color:var(--text-muted);font-size:.9rem">
-          ${data.message}. Click <strong style="color:var(--green)">Download Results</strong> to get the enriched CSV.
-        </div>
-      </div>`;
-    summary.style.display = 'block';
-    showToast(`✅ ${data.num_predictions} predictions complete`);
-  } catch(err){
-    showToast('❌ ' + err.message, 'error');
-  } finally{
-    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg> Predict Batch';
-    btn.disabled = false;
-  }
-}
-
-// ── Pre-populate from server-rendered result (fallback form submission) ── 
-{% if result and not result.error %}
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('empty-state').style.display = 'none';
-    document.getElementById('gauge-display').style.display = 'block';
-
-    setTimeout(() => updateGauge({{ result.churn_probability }}), 200);
-
-    showRiskCard(
-        "{{ result.risk_tier }}",
-        {{ result.churn_probability }}
-    );
-
-    {% if form_data %}
-    showInputSummary({{ form_data | tojson }});
-    {% endif %}
-});
-{% endif %}
-</script>
 {% endblock %}

@@ -1,0 +1,4 @@
+CreditScore,Geography,Gender,Age,Tenure,Balance,NumOfProducts,HasCrCard,IsActiveMember,EstimatedSalary
+600,0,1,40,5,50000,2,1,1,65000
+720,1,0,55,8,120000,1,1,0,85000
+450,2,1,35,2,0,2,0,1,45000

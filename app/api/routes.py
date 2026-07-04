@@ -30,11 +30,17 @@ print("Contents:", os.listdir("app/templates"))
 # ── Pages ────────────────────────────────────────────────────────────────────
 
 @router.get("/")
-async def home(request: Request):
+async def home(
+    request: Request,
+    message: str | None = None
+):
     return templates.TemplateResponse(
         request=request,
         name="home.html",
-        context={"request": request}
+        context={
+            "request": request,
+            "message": message,
+        }
     )
 
 @router.get("/predict")

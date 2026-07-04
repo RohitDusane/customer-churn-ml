@@ -52,8 +52,7 @@ def predict_batch(df: pd.DataFrame) -> tuple[str, int]:
     if missing:
         raise ValueError(f"Missing columns: {missing}")
 
-    df = df[EXPECTED_COLUMNS]
-
+    df = df[EXPECTED_COLUMNS].copy()
     if model is None or preprocessor is None:
         raise RuntimeError("Model or preprocessor is not loaded.")
 
@@ -69,6 +68,7 @@ def predict_batch(df: pd.DataFrame) -> tuple[str, int]:
 
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     filename = f"batch_predictions_{timestamp}.csv"
+
     os.makedirs(BATCH_OUTPUT_DIR, exist_ok=True)
     df.to_csv(os.path.join(BATCH_OUTPUT_DIR, filename), index=False)
 
