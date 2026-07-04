@@ -1,19 +1,185 @@
 {% extends "base.html" %}
-{% block title %}Home - Churn App{% endblock %}
+{% block title %}ChurnIQ — Customer Churn Prediction{% endblock %}
+
+{% block extra_style %}
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:60px;align-items:center;margin-bottom:80px}
+.hero-content{display:flex;flex-direction:column;gap:24px}
+.hero h1{
+  font-size:clamp(2.4rem,5vw,4rem);font-weight:800;line-height:1.07;letter-spacing:-.03em;
+  background:linear-gradient(135deg,#fff 30%,#93c5fd 70%,#22D3EE 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero p{font-size:1.1rem;line-height:1.8;color:var(--text-muted);max-width:480px}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap}
+.hero-visual{position:relative}
+.hero-card{
+  background:linear-gradient(160deg,rgba(59,130,246,.12),rgba(34,211,238,.06));
+  border:1px solid rgba(59,130,246,.2);border-radius:20px;
+  padding:30px;backdrop-filter:blur(20px);
+}
+.hero-card-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.hero-card-title{font-weight:700;color:#fff;font-size:1.05rem}
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.metric-box{
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+  border-radius:12px;padding:14px;text-align:center;
+}
+.metric-val{font-size:1.7rem;font-weight:800;color:#fff;line-height:1}
+.metric-lbl{font-size:.72rem;color:var(--text-muted);margin-top:4px;font-weight:600}
+.mini-bar{height:5px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden;margin:14px 0 4px}
+.mini-fill{height:100%;border-radius:3px}
+
+.stat-strip{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:70px;
+}
+.stat-box{
+  border-radius:18px;padding:24px 20px;text-align:center;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);
+  transition:var(--transition);position:relative;overflow:hidden;
+}
+.stat-box::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--gradient);transform:scaleX(0);transform-origin:left;
+  transition:.4s ease;
+}
+.stat-box:hover{transform:translateY(-5px);border-color:rgba(59,130,246,.3)}
+.stat-box:hover::before{transform:scaleX(1)}
+.stat-box h3{font-size:2rem;font-weight:800;color:#fff;margin-bottom:6px}
+.stat-box p{font-size:.85rem;color:var(--text-muted);line-height:1.5}
+
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-bottom:70px}
+.feature-card{
+  background:var(--gradient-card);border:1px solid var(--border);
+  border-radius:var(--radius-lg);padding:28px;
+  transition:var(--transition);position:relative;overflow:hidden;
+}
+.feature-card::after{
+  content:"";position:absolute;inset:0;
+  background:radial-gradient(circle at top right,var(--feature-glow,rgba(59,130,246,.1)),transparent 60%);
+  pointer-events:none;
+}
+.feature-card:hover{transform:translateY(-6px);border-color:var(--border-hover);box-shadow:var(--shadow-glow)}
+.feature-ico{
+  width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;
+  margin-bottom:18px;font-size:1.3rem;
+}
+.feature-card h3{font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:10px}
+.feature-card p{font-size:.9rem;line-height:1.7;color:var(--text-muted)}
+
+.message-toast{
+  background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);
+  border-radius:12px;padding:14px 20px;margin-bottom:28px;
+  color:var(--green);font-weight:600;display:flex;align-items:center;gap:10px;
+}
+
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr}
+  .hero-visual{display:none}
+  .stat-strip{grid-template-columns:1fr 1fr}
+  .features-grid{grid-template-columns:1fr}
+}
+{% endblock %}
+
 {% block content %}
-<div class="container">
-  <h2>📊 Welcome to the Customer Churn Prediction App</h2>
-  <p>
-    This app uses machine learning to help businesses predict customer churn risk.
-  </p>
-  <p>
-    Use the <strong>Predict</strong> tab to make a prediction using individual inputs or upload a CSV file for batch prediction.
-  </p>
-  <p>
-    Go to the <strong>About</strong> section to understand how this works.
-  </p>
+
+{% if message %}
+<div class="message-toast">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+  {{ message }}
 </div>
-<footer>
-      <p>Churn Predictor App v1.0.0 — Made with ❤️ by RD</p>
-    </footer>
+{% endif %}
+
+<!-- ── HERO ── -->
+<section class="hero fade-up">
+  <div class="hero-content">
+    <span class="eyebrow"><span class="dot"></span>ML-Powered Analytics</span>
+    <h1>Predict Customer Churn Before It Happens</h1>
+    <p>
+      Our XGBoost-powered system analyzes 10 key customer signals to identify churn risk
+      in real time — helping retention teams act before customers leave.
+    </p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="/predict">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>
+        Start Predicting
+      </a>
+      <a class="btn btn-secondary" href="/about">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/></svg>
+        How It Works
+      </a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-card">
+      <div class="hero-card-row">
+        <span class="hero-card-title">Live Prediction</span>
+        <span class="badge badge-green">● Model Active</span>
+      </div>
+      <div class="metric-grid">
+        <div class="metric-box">
+          <div class="metric-val" style="color:#3B82F6">0.86</div>
+          <div class="metric-lbl">ROC AUC</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-val" style="color:#10B981">0.71</div>
+          <div class="metric-lbl">Optimal F1</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-val" style="color:#22D3EE">0.30</div>
+          <div class="metric-lbl">Threshold</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-val" style="color:#F59E0B">XGB</div>
+          <div class="metric-lbl">Best Model</div>
+        </div>
+      </div>
+      <div class="mini-bar"><div class="mini-fill" style="width:86%;background:linear-gradient(90deg,#3B82F6,#22D3EE)"></div></div>
+      <div style="font-size:.78rem;color:var(--text-muted);text-align:right">ROC AUC: 86%</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── STATS ── -->
+<div class="stat-strip">
+  <div class="stat-box"><h3>0.86</h3><p>ROC AUC Score</p></div>
+  <div class="stat-box"><h3>0.71</h3><p>F1 Score (optimal threshold)</p></div>
+  <div class="stat-box"><h3>85%</h3><p>Test Accuracy</p></div>
+  <div class="stat-box"><h3>10K+</h3><p>Records trained on</p></div>
+</div>
+
+<!-- ── FEATURES ── -->
+<section>
+  <div class="section-heading">
+    <span class="eyebrow"><span class="dot"></span>Capabilities</span>
+    <h2>Everything you need to manage churn risk</h2>
+    <p>Single customer scoring and bulk batch analysis with downloadable results.</p>
+  </div>
+
+  <div class="features-grid">
+    <div class="feature-card" style="--feature-glow:rgba(59,130,246,.15)">
+      <div class="feature-ico" style="background:rgba(59,130,246,.15);color:#3B82F6">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <h3>Single Customer Prediction</h3>
+      <p>Enter individual customer details and get a real-time churn probability score with risk tier classification.</p>
+    </div>
+
+    <div class="feature-card" style="--feature-glow:rgba(34,211,238,.12)">
+      <div class="feature-ico" style="background:rgba(34,211,238,.12);color:#22D3EE">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      </div>
+      <h3>Batch CSV Analysis</h3>
+      <p>Upload thousands of customer records in a CSV file and download enriched predictions with probability scores.</p>
+    </div>
+
+    <div class="feature-card" style="--feature-glow:rgba(16,185,129,.12)">
+      <div class="feature-ico" style="background:rgba(16,185,129,.12);color:#10B981">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <h3>Risk Tier Classification</h3>
+      <p>Predictions are automatically classified into Low, Medium, or High risk tiers with actionable intervention guidance.</p>
+    </div>
+  </div>
+</section>
+
 {% endblock %}
